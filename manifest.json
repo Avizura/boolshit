@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "Transform to xls",
+  "version": "1.3.0",
+  "description": "",
+
+  "content_scripts": [{
+    "js": ["my.user.js"],
+    "matches": ["*://*/*"],
+    "run_at": "document_end"
+  }],
+  "icons": {
+    "128": "icon-128.png"
+  },
+  "browser_action": {
+    "default_title": "Avizura",
+    "default_icon": "icon-128.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "activeTab"
+  ]
+}

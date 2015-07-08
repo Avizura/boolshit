@@ -1,0 +1,26 @@
+{
+  "name": "userScript",
+  "version": "1.0.0",
+  "description": "Transform to xls.",
+  "main": "my.user.js",
+  "dependencies": {
+    "body-parser": "^1.13.1",
+    "excel4node": "^0.2.17",
+    "express": "^4.13.0",
+    "grunt": "^0.4.5",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-nodemon": "^0.4.0",
+    "json2xls": "0.0.5",
+    "load-grunt-tasks": "^3.2.0",
+    "rand-token": "^0.2.1",
+    "workbook": "^1.1.0",
+    "xlsx": "^0.8.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

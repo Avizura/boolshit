@@ -1,0 +1,19 @@
+#mytext {
+  color: blue;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+#go {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 5px;
+  width: 100px;
+}
+#block{
+  display: inline-block;
+}
+input{
+  width: 300px;
+}
