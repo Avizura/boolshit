@@ -4,7 +4,7 @@ var qs = require('querystring');
 var uid = require('rand-token').uid;
 var fs = require('fs');
 var serverPort = '5000';
-var serverAddress = '10.0.50.198';
+var serverAddress = '127.0.0.1';
 var wb, ws, ws2, ws3, ws4, ws5, data1;
 try {
   var xl = require('excel4node');
@@ -16,6 +16,10 @@ fs.readFile('path.txt', function(err, data) {
   path = '' + data;
   console.log(path);
 });
+
+function final(post){
+  ws3.Cell(44, 3).String(post.reg);
+}
 
 function createFourthSheet(data1) {
   var myStyle = wb.Style();
@@ -104,7 +108,7 @@ function createFourthSheet(data1) {
   ws4.Cell(1, 1, 40, 9).Style(myBorder);
 }
 
-function createThirdSheet(data1) {
+function createThirdSheet(data1, post) {
   var data = [{}, {}, {}, {
     v1: 'Нижняя граница',
     v2: 'Результат проверки',
@@ -310,6 +314,7 @@ function createThirdSheet(data1) {
   }
 
   ws3.Cell(27, 1, 27, 7, true).Format.Font.Alignment.Horizontal('left').String('Примечания:');
+  ws3.Cell(28, 1, 32, 7, true).String(post.special);
   ws3.Cell(33, 1, 33, 7, true).String('Данные транспортного средства').Style(myStyle);
   ws3.Cell(34, 1, 34, 2, true).String(data1[7].v5).Style(myStyle3);
   ws3.Cell(34, 3, 34, 4, true).String(data1[7].v6).Style(myStyle2);
@@ -326,8 +331,13 @@ function createThirdSheet(data1) {
 
   ws3.Cell(38, 1, 38, 5, true).String('Заключение о возможности/невозможности эксплуатации транспортного средства').Style(myStyle4);
   ws3.Cell(39, 1, 39, 5, true).String('Results of the roadworthiness inspection').Format.Font.Family('Times New Roman');
-  ws3.Cell(38, 6, 39, 6, true).String('Возможно  Passed').Style(myStyle2);
+  ws3.Cell(38, 6, 39, 6, true).String('Возможно  Passed').Style(myStyle);
   ws3.Cell(38, 7, 39, 7, true).String('Невозможно  Failed').Style(myStyle);
+  if(post.result == true)
+    ws3.Cell(38, 6, 39, 6).String('Возможно  Passed').Style(myStyle2);
+  else
+    ws3.Cell(38, 7, 39, 7).String('Невозможно  Failed').Style(myStyle2);
+  ws3.Cell(46, 3).String(post.date).Style(myStyle);
   ws3.Cell(40, 1, 42, 5, true).String('Пункты диагностической карты, требующие повторной проверки:').Format.Font.Alignment.Vertical('top').Format.Font.Family('Times New Roman');
   ws3.Cell(40, 6, 41, 7, true).String('Повторный технический контроль пройти до:').Style(myStyle);
   ws3.Cell(42, 6, 42, 7, true);
@@ -337,7 +347,7 @@ function createThirdSheet(data1) {
   ws3.Cell(46, 3, 46, 4, true).String('').Style(myStyle2); //wtf
   ws3.Cell(46, 6).String('Печать         Stamp').Style(myStyle);
   ws3.Cell(47, 1, 47, 3, true).String('Ф.И.О. технического эксперта');
-  ws3.Cell(47, 4).String('').Style(myStyle2); //wtf
+  ws3.Cell(47, 4).String(post.expert).Style(myStyle2); //wtf
   ws3.Cell(48, 1, 48, 3, true).String('Подпись                                   Signature').Style(myStyle);
 
   ws3.Cell(1, 8, 49, 8).Style(leftBorder);
@@ -1672,6 +1682,8 @@ var onRequest = function(req, res) {
         createThirdSheet(data1, post);
       // Synchronously write file
       console.log('STEP 3');
+      } else {
+        final(post);
         var token = uid(16);
         wb.write("./data/" + token + ".xlsx");
         wb = ws = ws2 = ws3 = ws4 = '';

@@ -1,0 +1,73 @@
+<div class="ttl_1">Шаг 3 - Заключение</div>
+
+<div class="gray_block">
+
+  <div class="ttl_1">Заключение о возможности/невозможности эксплуатации транспортного средства</div>
+
+  <input type="hidden" name="ZAKLUCHENIE" id="ZAKLUCHENIE" value="1">
+
+  <div class="zakluchenie_variant zakluchenie_da">
+    <strong style="color:green">Возможно</strong>
+    <table class="gray_tbl">
+      <tr>
+        <td class="td1" style="width:260px; padding-top:4px;">Срок действия:
+          <span style="color: red;">*</span>
+        </td>
+        <td class="">
+          <input type="text" name="SROK_DEISTV" id="SROK_DEISTV" value="" class="inp inp_calend">
+        </td>
+      </tr>
+    </table>
+    <br clear="all">
+    <br>
+  </div>
+
+  <div class="zakluchenie_variant zakluchenie_net" style="display:none">
+    <strong style="color:red">Невозможно</strong>
+    <table class="gray_tbl">
+      <tr>
+        <td class="td1" style="width:260px; padding-top:4px;">Повторный технический осмотр пройти до:</td>
+        <td class="">
+          <input class="inp inp_calend" type="text" name="PROITI_POVTORNO_DO" value="13.07.2015" readonly="readonly" disabled="disabled" />
+        </td>
+      </tr>
+    </table>
+    <br clear="all">
+    <br>
+  </div>
+</div>
+<br clear="all" class="br0">
+
+<div class="gray_block zakluchenie_variant zakluchenie_da">
+  Особые отметки:
+  <br>
+  <textarea rows="5" class="tarea" name="OSOB_OTMETKI" id="OSOB_OTMETKI" style="width:95%; margin-bottom:20px;"></textarea>
+
+  <br clear="all" class="br0">
+</div>
+<br clear="all" class="br0">
+
+<div class="gray_block">
+  <div class="ttl_1">Вид проверки <a href="javascript:switchElement('pervich_proverka_container');void(0)">&gt;&gt;</a></div>
+
+  <div class="div_PERVICH_PROVERKA" style="display:none" id="pervich_proverka_container">
+    <input type="radio" name="PERVICH_PROVERKA" id="radio_0" value="1" checked="checked">
+    <label for="radio_0">Первичная</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <input type="radio" name="PERVICH_PROVERKA" id="radio_1" value="0" disabled="disabled">Повторная</label>
+    <br clear="all">
+    <br>
+  </div>
+
+</div>
+<br clear="all" class="br0">
+
+
+<div class="gray_block">
+  <div class="ttl_1">Технический эксперт <a href="javascript:switchElement('expert_container');void(0)">&gt;&gt;</a></div>
+
+  <div id="expert_container" style="display:none">
+    Сакуров Валерий Александрович
+    <br clear="all">
+    <br>
+  </div>
+</div>

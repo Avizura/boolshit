@@ -1,4 +1,4 @@
-var serverAddress = 'http://10.0.50.198:5000';
+var serverAddress = 'http://127.0.0.1:5000';
 var request = new XMLHttpRequest();
 
 function toUrlEncoded(obj) {
@@ -24,9 +24,14 @@ function getSelectedValue(id) {
 
 function getStep2Value(id) {
   var el = document.getElementById('parameter_row_' + id);
-  if (el.classList.contains('tr_sel_disabled') || el.classList.contains('nonclickable')) {
-    return '+';
-  } else if (el.classList.contains('tr_sel_red')) return '';
+  if (el.classList.contains('nonclickable')) {
+    return '';
+  } else if (el.classList.contains('tr_sel_disabled')) {
+    return '-';
+  } else if (el.classList.contains('tr_sel_red')) return '+';
+  // if (el.classList.contains('tr_sel_disabled') || el.classList.contains('nonclickable')) {
+  //   return '+';
+  // } else if (el.classList.contains('tr_sel_red')) return '';
 }
 
 function getRadioValue() {
@@ -36,13 +41,24 @@ function getRadioValue() {
     return 'Повторная';
 }
 
+function getResult() {
+  if (document.getElementsByClassName('zakluchenie_variant zakluchenie_da')[0].style.display == "")
+    return true;
+  else return false;
+}
+
 console.log("new");
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
   console.log("EURIKA!!");
   console.log(sender);
   // var data = {msg: 'lol'};
-  var step = document.getElementsByClassName("sel")[1].getElementsByClassName('kvadr')[0].innerHTML;
+  // var step = document.getElementsByClassName("sel")[1].getElementsByClassName('kvadr')[0].innerHTML;
+  try {
+    var step = document.getElementsByClassName("sel")[1].getElementsByClassName('kvadr')[0].innerHTML;
+  } catch (e) {
+    console.log(e);
+  }
   if (step == '1') {
     var data = {
       msg: "step 1",
@@ -138,12 +154,30 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
       _65: getStep2Value(65)
     }
   } else if (step == '3') {
+    // data = {
+    //   msg: 'step 3',
+    //   SROK_DEISTV: ge('SROK_DEISTV'),
+    //   check: getRadioValue(),
+    //
+    // };
+    var temp;
+    if (getResult() == true)
+      temp = ge('SROK_DEISTV');
+    else temp = ge('PROITI_POVTORNO_DO');
     data = {
       msg: 'step 3',
       SROK_DEISTV: ge('SROK_DEISTV'),
+      result: getResult(),
+      validity: temp,
+      special: ge('OSOB_OTMETKI'),
       check: getRadioValue(),
-
+      date: document.getElementsByClassName('gray_tbl')[2].getElementsByTagName('td')[1].innerHTML,
+      expert: document.getElementById('expert_container').childNodes[0]
     };
+  } else {
+    data = {
+      reg: document.getElementsByClassName('second_cont')[0].getElementsByTagName('h2')[1].getElementsByTagName('strong')[0].innerHTML
+    }
   }
   request.onreadystatechange = function() {
     if (request.readyState == 4 && request.status == 200) {
