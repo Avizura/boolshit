@@ -1,4 +1,4 @@
-var serverAddress = 'http://10.0.50.198:5000';
+var serverAddress = 'http://127.0.0.1:5000';
 var request = new XMLHttpRequest();
 function toUrlEncoded(obj) {
   var urlEncoded = "";

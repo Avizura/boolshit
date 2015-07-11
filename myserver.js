@@ -5,7 +5,7 @@ var uid = require('rand-token').uid;
 var fs = require('fs');
 var serverPort = '5000';
 var serverAddress = '127.0.0.1';
-var wb, ws, ws2, ws3, ws4, ws5, data1;
+var wb, ws0, ws, ws2, ws3, ws4, ws5, data1;
 try {
   var xl = require('excel4node');
 } catch (e) {
@@ -17,7 +17,9 @@ fs.readFile('path.txt', function(err, data) {
   console.log(path);
 });
 
-function final(post){
+function final(post) {
+  ws0.Cell(2, 27).String(post.reg);
+  ws2.Cell(2, 5).String(post.reg);
   ws3.Cell(44, 3).String(post.reg);
 }
 
@@ -65,7 +67,7 @@ function createFourthSheet(data1) {
   ws4.Cell(4, 1, 4, 7, true).String('к/с: 30101810400000000607 в ОПЕРУ МГТУ Банка России');
   ws4.Cell(5, 1, 5, 7, true).String('БИК: 044525607  ИНН: 920100006420');
   ws4.Cell(6, 1, 6, 2, true).Format.Font.Bold().Format.Font.Alignment.Horizontal('center').String('Плательщик');
-  ws4.Cell(6, 3, 6, 7, true).Format.Font.Bold().String('');
+  ws4.Cell(6, 3, 6, 7, true).Format.Font.Bold().Format.Font.Alignment.Horizontal('center').String(data1[9].v2);
   ws4.Cell(7, 1, 7, 2, true).Format.Font.Alignment.Horizontal('center').String('моб. тел.');
   ws4.Cell(7, 3, 7, 7, true).Format.Font.Alignment.Horizontal('center').String('+79788987206');
   ws4.Cell(8, 1, 8, 2, true).Format.Font.Alignment.Horizontal('center').String('Вид платежа');
@@ -87,7 +89,7 @@ function createFourthSheet(data1) {
   ws4.Cell(20, 7).String(data1[4].v2).Style(myStyle2);
   ws4.Cell(21, 1, 21, 9, true).String(' в течение 3-х дней. С условиями приема указанной в платежном документе суммы, в т.ч. с суммой взымаемой платы ').Style(myStyle);
   ws4.Cell(22, 1, 22, 9, true).String('за услуги  банка, ознакомлен и согласен.').Style(myStyle);
-  ws4.Cell(25, 2).String('16-06-15').Style(myStyle2);
+  ws4.Cell(25, 2).String(post.date).Style(myStyle2);
   ws4.Cell(25, 6, 25, 9, true).String(' ________________ /А.В. Соломатов/').Style(myStyle);
   ws4.Cell(28, 1, 28, 9, true).String('_________________________________________________________________________________________________________________________').Style(myStyle);
   ws4.Cell(30, 1, 30, 9, true).String('Поручение на оплату услуг').Style(myStyle2);
@@ -102,136 +104,20 @@ function createFourthSheet(data1) {
   ws4.Cell(35, 1, 35, 9, true).String('в порядке, предусмотренном главой 49 Гражданского кодекса РФ поручаю внести за меня плату за оказания услуг').Style(myStyle);
   ws4.Cell(36, 1).String(' в размере').Style(myStyle); //wtf
   ws4.Cell(37, 1, 37, 9, true).String('С условиями приема указанной в платежном документе суммы, в т.ч. с суммой взымаемой платы за услуги банка, ознакомлен и согласен.').Style(myStyle);
-  ws4.Cell(39, 2).String('16-06-15').Style(myStyle2);
+  ws4.Cell(39, 2).String(post.date).Style(myStyle2);
   ws4.Cell(39, 5, 39, 9, true).String('____________________/' + data1[9].v2).Style(myStyle);
   //Border
   ws4.Cell(1, 1, 40, 9).Style(myBorder);
 }
 
 function createThirdSheet(data1, post) {
-  var data = [{}, {}, {}, {
-    v1: 'Нижняя граница',
-    v2: 'Результат проверки',
-    v3: 'Верхняя граница',
-    v4: 'Наименование параметра',
-    v5: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: '',
-    v4: '',
-    v5: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: '',
-    v4: '',
-    v5: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: '',
-    v4: '',
-    v5: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: '',
-    v4: '',
-    v5: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: '',
-    v4: '',
-    v5: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: '',
-    v4: '',
-    v5: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: '',
-    v4: '',
-    v5: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: '',
-    v4: '',
-    v5: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: '',
-    v4: '',
-    v5: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: '',
-    v4: '',
-    v5: ''
-  }];
-  var data2 = [{
-    v1: 'Предмет проверки (узел, деталь, агрегат)',
-    v2: 'Содержание невыполненного требования (с указанием нормативного источника)',
-    v3: 'Пункт диагностической карты'
-  }, {
-    v1: '',
-    v2: '',
-    v3: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: ''
-  }, {
-    v1: '',
-    v2: '',
-    v3: ''
-  }];
   ws3.Column(1).Width(10);
   ws3.Column(2).Width(12);
   ws3.Column(3).Width(10);
   ws3.Column(4).Width(20);
   ws3.Column(5).Width(15);
   ws3.Column(6).Width(15);
-  ws3.Column(7).Width(15);
+  ws3.Column(7).Width(17);
 
   ws3.Row(48).Height(30);
   //стили
@@ -294,27 +180,60 @@ function createThirdSheet(data1, post) {
       color: '0000FF'
     }
   });
-
+  //Журнал регистрации
+  ws0.Cell(2, 22).String(post.date);
+  ws0.Cell(2, 23).String(post.validity);
+  //Первый лист
+  if (post.checkType == true)
+    ws.Cell(3, 3).String('X');
+  else if (post.checkType == false)
+    ws.Cell(3, 6).String('X');
+  if (post.result == true)
+    ws.Cell(93, 8, 93, 9).Style(myStyle2);
+  else
+    ws.Cell(93, 10, 93, 11).Style(myStyle2);
+  ws.Cell(94, 4).String(post.date);
+  ws.Cell(94, 10).String(post.expert);
+  //Второй лист срок действия
+  ws2.Cell(2, 14).String(post.validity);
+  console.log('lol123');
+  console.log(post.checkType);
+  if (post.checkType == '1') {
+    console.log('CHeCK TRUE');
+    ws2.Cell(5, 5).String('X');
+  } else if (post.checkType == '2') {
+    console.log('CHECK FALSE');
+    ws2.Cell(5, 13).String('X');
+  }
+  ws2.Cell(2, 14).String(post.validity);
+  ws2.Cell(3, 6).String(post.expert);
   //объединение ячеек
   ws3.Cell(1, 1, 1, 7, true).String('Результаты диагностирования').Style(myStyle);
   ws3.Cell(2, 1, 2, 6, true).String('Параметры, по которым установлено несоответствие').Style(myStyle);
   ws3.Cell(2, 7, 3, 7, true).String('Пункт диагностической карты').Style(myStyle);
-  for (var i = 3; i < 14; ++i) {
-    ws3.Cell(i, 1).String(data[i].v1).Style(myStyle);
-    ws3.Cell(i, 2).String(data[i].v2).Style(myStyle);
-    ws3.Cell(i, 3).String(data[i].v3).Style(myStyle);
-    ws3.Cell(i, 4, i, 6, true).String(data[i].v4).Style(myStyle);
-    ws3.Cell(i, 7).String(data[i].v5).Style(myStyle);
+  ws3.Cell(3, 1).String('Нижняя граница').Style(myStyle);
+  ws3.Cell(3, 2).String('Результат проверки').Style(myStyle);
+  ws3.Cell(3, 3).String('Верхняя граница').Style(myStyle);
+  ws3.Cell(3, 4, 3, 6, true).String('Наименование параметра').Style(myStyle);
+  ws3.Cell(3, 7).String('Пункт диагностической карты').Style(myStyle);
+  for (var i = 4; i < 14; ++i) {
+    ws3.Cell(i, 1).Style(myStyle);
+    ws3.Cell(i, 2).Style(myStyle);
+    ws3.Cell(i, 3).Style(myStyle);
+    ws3.Cell(i, 4, i, 6, true).Style(myStyle);
+    ws3.Cell(i, 7).Style(myStyle);
   }
   ws3.Cell(14, 1, 14, 7, true).String('Невыполненные требования').Style(myStyle);
-  for (var i = 15; i < 27; ++i) {
-    ws3.Cell(i, 1, i, 2, true).String(data2[i - 15].v1).Style(myStyle);
-    ws3.Cell(i, 3, i, 6, true).String(data2[i - 15].v2).Style(myStyle);
-    ws3.Cell(i, 7).String(data2[i - 15].v3).Style(myStyle);
+  ws3.Cell(15, 1, 15, 2, true).String('Предмет проверки (узел, деталь, агрегат)').Style(myStyle);
+  ws3.Cell(15, 3, 15, 6, true).String('Содержание невыполненного требования (с указанием нормативного источника)').Style(myStyle);
+  ws3.Cell(15, 7).String('Пункт диагностической карты').Style(myStyle);
+  for (var i = 16; i < 27; ++i) {
+    ws3.Cell(i, 1, i, 2, true).Style(myStyle);
+    ws3.Cell(i, 3, i, 6, true).Style(myStyle);
+    ws3.Cell(i, 7).Style(myStyle);
   }
-
   ws3.Cell(27, 1, 27, 7, true).Format.Font.Alignment.Horizontal('left').String('Примечания:');
-  ws3.Cell(28, 1, 32, 7, true).String(post.special);
+  ws3.Cell(28, 1, 32, 7, true).String(post.notes).Style(myStyle3);
   ws3.Cell(33, 1, 33, 7, true).String('Данные транспортного средства').Style(myStyle);
   ws3.Cell(34, 1, 34, 2, true).String(data1[7].v5).Style(myStyle3);
   ws3.Cell(34, 3, 34, 4, true).String(data1[7].v6).Style(myStyle2);
@@ -331,25 +250,25 @@ function createThirdSheet(data1, post) {
 
   ws3.Cell(38, 1, 38, 5, true).String('Заключение о возможности/невозможности эксплуатации транспортного средства').Style(myStyle4);
   ws3.Cell(39, 1, 39, 5, true).String('Results of the roadworthiness inspection').Format.Font.Family('Times New Roman');
-  ws3.Cell(38, 6, 39, 6, true).String('Возможно  Passed').Style(myStyle);
-  ws3.Cell(38, 7, 39, 7, true).String('Невозможно  Failed').Style(myStyle);
-  if(post.result == true)
-    ws3.Cell(38, 6, 39, 6).String('Возможно  Passed').Style(myStyle2);
+  ws3.Cell(38, 6, 39, 6, true).String('Возможно   Passed').Style(myStyle);
+  ws3.Cell(38, 7, 39, 7, true).String('Невозможно    Failed').Style(myStyle);
+  if (post.result == true)
+    ws3.Cell(38, 6).Style(myStyle2);
   else
-    ws3.Cell(38, 7, 39, 7).String('Невозможно  Failed').Style(myStyle2);
+    ws3.Cell(38, 7).Style(myStyle2);
   ws3.Cell(46, 3).String(post.date).Style(myStyle);
   ws3.Cell(40, 1, 42, 5, true).String('Пункты диагностической карты, требующие повторной проверки:').Format.Font.Alignment.Vertical('top').Format.Font.Family('Times New Roman');
   ws3.Cell(40, 6, 41, 7, true).String('Повторный технический контроль пройти до:').Style(myStyle);
-  ws3.Cell(42, 6, 42, 7, true);
+  ws3.Cell(42, 6, 42, 7, true).String(post.repeat).Style(myStyle);
   ws3.Cell(44, 1, 45, 2, true).Format.Font.Alignment.Horizontal('center').String('Номер в ЕАИСТО');
-  ws3.Cell(44, 3, 45, 4, true).String('').Style(myStyle2); //wtf
+  ws3.Cell(44, 3, 45, 4, true).Style(myStyle2);
   ws3.Cell(46, 1, 46, 2, true).Format.Font.Alignment.Horizontal('center').String('Дата проверки ТС:');
-  ws3.Cell(46, 3, 46, 4, true).String('').Style(myStyle2); //wtf
+  ws3.Cell(46, 3, 46, 4, true).String(post.date).Style(myStyle2);
   ws3.Cell(46, 6).String('Печать         Stamp').Style(myStyle);
   ws3.Cell(47, 1, 47, 3, true).String('Ф.И.О. технического эксперта');
-  ws3.Cell(47, 4).String(post.expert).Style(myStyle2); //wtf
+  ws3.Cell(47, 4).String(post.expert).Style(myStyle2);
   ws3.Cell(48, 1, 48, 3, true).String('Подпись                                   Signature').Style(myStyle);
-
+  //Border
   ws3.Cell(1, 8, 49, 8).Style(leftBorder);
   ws3.Cell(49, 1, 49, 7).Style(bottomBorder);
 }
@@ -726,73 +645,73 @@ function createSecondSheet(data1, post) {
   ws2.Cell(10, 7, 10, 15, true).String(data[10].v2).Style(myStyle2);
 
   //data for first column
-  ws3.Cell(13, 6).String(post._1).Style(myStyle2);
-  ws2.Cell(14, 6).String(post._2).Style(myStyle2);
-  ws2.Cell(15, 6).String(post._3).Style(myStyle2);
-  ws2.Cell(16, 6).String(post._4).Style(myStyle2);
-  ws2.Cell(17, 6).String(post._5).Style(myStyle2);
-  ws2.Cell(18, 6).String(post._6).Style(myStyle2);
-  ws2.Cell(19, 6).String(post._7).Style(myStyle2);
-  ws2.Cell(20, 6).String(post._8).Style(myStyle2);
-  ws2.Cell(21, 6).String(post._9).Style(myStyle2);
-  ws2.Cell(22, 6).String(post._10).Style(myStyle2);
-  ws2.Cell(23, 6).String(post._11).Style(myStyle2);
-  ws2.Cell(25, 6).String(post._12).Style(myStyle2);
-  ws2.Cell(26, 6).String(post._13).Style(myStyle2);
-  ws2.Cell(27, 6).String(post._14).Style(myStyle2);
-  ws2.Cell(28, 6).String(post._15).Style(myStyle2);
-  ws2.Cell(29, 6).String(post._16).Style(myStyle2);
-  ws2.Cell(30, 6).String(post._17).Style(myStyle2);
-  ws2.Cell(32, 6).String(post._18).Style(myStyle2);
-  ws2.Cell(33, 6).String(post._19).Style(myStyle2);
-  ws2.Cell(34, 6).String(post._20).Style(myStyle2);
-  ws2.Cell(35, 6).String(post._21).Style(myStyle2);
+  ws2.Cell(13, 6).String(post[post.length - 1]._1).Style(myStyle2);
+  ws2.Cell(14, 6).String(post[post.length - 1]._2).Style(myStyle2);
+  ws2.Cell(15, 6).String(post[post.length - 1]._3).Style(myStyle2);
+  ws2.Cell(16, 6).String(post[post.length - 1]._4).Style(myStyle2);
+  ws2.Cell(17, 6).String(post[post.length - 1]._5).Style(myStyle2);
+  ws2.Cell(18, 6).String(post[post.length - 1]._6).Style(myStyle2);
+  ws2.Cell(19, 6).String(post[post.length - 1]._7).Style(myStyle2);
+  ws2.Cell(20, 6).String(post[post.length - 1]._8).Style(myStyle2);
+  ws2.Cell(21, 6).String(post[post.length - 1]._9).Style(myStyle2);
+  ws2.Cell(22, 6).String(post[post.length - 1]._10).Style(myStyle2);
+  ws2.Cell(23, 6).String(post[post.length - 1]._11).Style(myStyle2);
+  ws2.Cell(25, 6).String(post[post.length - 1]._12).Style(myStyle2);
+  ws2.Cell(26, 6).String(post[post.length - 1]._13).Style(myStyle2);
+  ws2.Cell(27, 6).String(post[post.length - 1]._14).Style(myStyle2);
+  ws2.Cell(28, 6).String(post[post.length - 1]._15).Style(myStyle2);
+  ws2.Cell(29, 6).String(post[post.length - 1]._16).Style(myStyle2);
+  ws2.Cell(30, 6).String(post[post.length - 1]._17).Style(myStyle2);
+  ws2.Cell(32, 6).String(post[post.length - 1]._18).Style(myStyle2);
+  ws2.Cell(33, 6).String(post[post.length - 1]._19).Style(myStyle2);
+  ws2.Cell(34, 6).String(post[post.length - 1]._20).Style(myStyle2);
+  ws2.Cell(35, 6).String(post[post.length - 1]._21).Style(myStyle2);
   //data for second column
-  ws2.Cell(12, 11).String(post._22).Style(myStyle2);
-  ws2.Cell(14, 11).String(post._23).Style(myStyle2);
-  ws2.Cell(15, 11).String(post._24).Style(myStyle2);
-  ws2.Cell(16, 11).String(post._25).Style(myStyle2);
-  ws2.Cell(18, 11).String(post._26).Style(myStyle2);
-  ws2.Cell(19, 11).String(post._27).Style(myStyle2);
-  ws2.Cell(20, 11).String(post._28).Style(myStyle2);
-  ws2.Cell(21, 11).String(post._29).Style(myStyle2);
-  ws2.Cell(22, 11).String(post._30).Style(myStyle2);
-  ws2.Cell(23, 11).String(post._31).Style(myStyle2);
-  ws2.Cell(25, 11).String(post._32).Style(myStyle2);
-  ws2.Cell(26, 11).String(post._33).Style(myStyle2);
-  ws2.Cell(27, 11).String(post._34).Style(myStyle2);
-  ws2.Cell(28, 11).String(post._35).Style(myStyle2);
-  ws2.Cell(29, 11).String(post._36).Style(myStyle2);
-  ws2.Cell(31, 11).String(post._37).Style(myStyle2);
-  ws2.Cell(32, 11).String(post._38).Style(myStyle2);
-  ws2.Cell(33, 11).String(post._39).Style(myStyle2);
-  ws2.Cell(34, 11).String(post._40).Style(myStyle2);
-  ws2.Cell(35, 11).String(post._41).Style(myStyle2);
+  ws2.Cell(12, 11).String(post[post.length - 1]._22).Style(myStyle2);
+  ws2.Cell(14, 11).String(post[post.length - 1]._23).Style(myStyle2);
+  ws2.Cell(15, 11).String(post[post.length - 1]._24).Style(myStyle2);
+  ws2.Cell(16, 11).String(post[post.length - 1]._25).Style(myStyle2);
+  ws2.Cell(18, 11).String(post[post.length - 1]._26).Style(myStyle2);
+  ws2.Cell(19, 11).String(post[post.length - 1]._27).Style(myStyle2);
+  ws2.Cell(20, 11).String(post[post.length - 1]._28).Style(myStyle2);
+  ws2.Cell(21, 11).String(post[post.length - 1]._29).Style(myStyle2);
+  ws2.Cell(22, 11).String(post[post.length - 1]._30).Style(myStyle2);
+  ws2.Cell(23, 11).String(post[post.length - 1]._31).Style(myStyle2);
+  ws2.Cell(25, 11).String(post[post.length - 1]._32).Style(myStyle2);
+  ws2.Cell(26, 11).String(post[post.length - 1]._33).Style(myStyle2);
+  ws2.Cell(27, 11).String(post[post.length - 1]._34).Style(myStyle2);
+  ws2.Cell(28, 11).String(post[post.length - 1]._35).Style(myStyle2);
+  ws2.Cell(29, 11).String(post[post.length - 1]._36).Style(myStyle2);
+  ws2.Cell(31, 11).String(post[post.length - 1]._37).Style(myStyle2);
+  ws2.Cell(32, 11).String(post[post.length - 1]._38).Style(myStyle2);
+  ws2.Cell(33, 11).String(post[post.length - 1]._39).Style(myStyle2);
+  ws2.Cell(34, 11).String(post[post.length - 1]._40).Style(myStyle2);
+  ws2.Cell(35, 11).String(post[post.length - 1]._41).Style(myStyle2);
   //data for third column
-  ws2.Cell(12, 15).String(post._42).Style(myStyle2);
-  ws2.Cell(13, 15).String(post._43).Style(myStyle2);
-  ws2.Cell(14, 15).String(post._44).Style(myStyle2);
-  ws2.Cell(15, 15).String(post._45).Style(myStyle2);
-  ws2.Cell(16, 15).String(post._46).Style(myStyle2);
-  ws2.Cell(17, 15).String(post._47).Style(myStyle2);
-  ws2.Cell(18, 15).String(post._48).Style(myStyle2);
-  ws2.Cell(19, 15).String(post._49).Style(myStyle2);
-  ws2.Cell(20, 15).String(post._50).Style(myStyle2);
-  ws2.Cell(21, 15).String(post._51).Style(myStyle2);
-  ws2.Cell(22, 15).String(post._52).Style(myStyle2);
-  ws2.Cell(23, 15).String(post._53).Style(myStyle2);
-  ws2.Cell(24, 15).String(post._54).Style(myStyle2);
-  ws2.Cell(25, 15).String(post._55).Style(myStyle2);
-  ws2.Cell(26, 15).String(post._56).Style(myStyle2);
-  ws2.Cell(27, 15).String(post._57).Style(myStyle2);
-  ws2.Cell(28, 15).String(post._58).Style(myStyle2);
-  ws2.Cell(29, 15).String(post._59).Style(myStyle2);
-  ws2.Cell(30, 15).String(post._60).Style(myStyle2);
-  ws2.Cell(31, 15).String(post._61).Style(myStyle2);
-  ws2.Cell(32, 15).String(post._62).Style(myStyle2);
-  ws2.Cell(33, 15).String(post._63).Style(myStyle2);
-  ws2.Cell(34, 15).String(post._64).Style(myStyle2);
-  ws2.Cell(35, 15).String(post._65).Style(myStyle2);
+  ws2.Cell(12, 15).String(post[post.length - 1]._42).Style(myStyle2);
+  ws2.Cell(13, 15).String(post[post.length - 1]._43).Style(myStyle2);
+  ws2.Cell(14, 15).String(post[post.length - 1]._44).Style(myStyle2);
+  ws2.Cell(15, 15).String(post[post.length - 1]._45).Style(myStyle2);
+  ws2.Cell(16, 15).String(post[post.length - 1]._46).Style(myStyle2);
+  ws2.Cell(17, 15).String(post[post.length - 1]._47).Style(myStyle2);
+  ws2.Cell(18, 15).String(post[post.length - 1]._48).Style(myStyle2);
+  ws2.Cell(19, 15).String(post[post.length - 1]._49).Style(myStyle2);
+  ws2.Cell(20, 15).String(post[post.length - 1]._50).Style(myStyle2);
+  ws2.Cell(21, 15).String(post[post.length - 1]._51).Style(myStyle2);
+  ws2.Cell(22, 15).String(post[post.length - 1]._52).Style(myStyle2);
+  ws2.Cell(23, 15).String(post[post.length - 1]._53).Style(myStyle2);
+  ws2.Cell(24, 15).String(post[post.length - 1]._54).Style(myStyle2);
+  ws2.Cell(25, 15).String(post[post.length - 1]._55).Style(myStyle2);
+  ws2.Cell(26, 15).String(post[post.length - 1]._56).Style(myStyle2);
+  ws2.Cell(27, 15).String(post[post.length - 1]._57).Style(myStyle2);
+  ws2.Cell(28, 15).String(post[post.length - 1]._58).Style(myStyle2);
+  ws2.Cell(29, 15).String(post[post.length - 1]._59).Style(myStyle2);
+  ws2.Cell(30, 15).String(post[post.length - 1]._60).Style(myStyle2);
+  ws2.Cell(31, 15).String(post[post.length - 1]._61).Style(myStyle2);
+  ws2.Cell(32, 15).String(post[post.length - 1]._62).Style(myStyle2);
+  ws2.Cell(33, 15).String(post[post.length - 1]._63).Style(myStyle2);
+  ws2.Cell(34, 15).String(post[post.length - 1]._64).Style(myStyle2);
+  ws2.Cell(35, 15).String(post[post.length - 1]._65).Style(myStyle2);
 
   //opt
   for (var i = 11; i < 36; i++) {
@@ -1035,16 +954,15 @@ function createWorkBook(post) {
   ws0.Cell(2, 19).String(post.regNOMER).Style(myStyle5);
   ws0.Cell(2, 20).String(post.regKEM).Style(myStyle5);
   ws0.Cell(2, 21).String(post.regKOGDA).Style(myStyle5);
-  ws0.Cell(2, 22).String(new Date().toLocaleDateString('ru')).Style(myStyle5); //wtf
-  // ws0.Cell(2, 23).String(''); //wtf
+  ws0.Cell(2, 22).String('').Style(myStyle5);
+  ws0.Cell(2, 23).String('').Style(myStyle5);
   ws0.Cell(2, 24).String('Карых С. В.').Style(myStyle5);
-  // ws0.Cell(2, 25).String(''); //wtf
-  // ws0.Cell(2, 26).String(''); //wtf
-  // ws0.Cell(2, 27).String('ЕАИСТО'); //wtf
-
-  // ws0.Cell(2, 28).String('Договор'); //wtf
-  // ws0.Cell(2, 29).String('ТЕЛ'); //wtf
-  // ws0.Cell(2, 30).String('№ Счета'); //wtf
+  ws0.Cell(2, 25).String('').Style(myStyle5);
+  ws0.Cell(2, 26).String('').Style(myStyle5);
+  ws0.Cell(2, 27).String('').Style(myStyle5);
+  ws0.Cell(2, 28).String('').Style(myStyle5);
+  ws0.Cell(2, 29).String('').Style(myStyle5);
+  ws0.Cell(2, 30).String('').Style(myStyle5);
   /*
     Code to generate page Первичный
   */
@@ -1123,9 +1041,9 @@ function createWorkBook(post) {
     address: "299053г. Севастополь ул. Вакуленчука 41/9 ИП Пополитов Руслан Анатольевич"
   }, {
     v1: "Первичная проверка:",
-    v2: "", //wtf
+    v2: "",
     v3: "Повторная проверка:",
-    v4: "", //wtf
+    v4: "",
     v5: "Пробег ТС:",
     v6: post.mileage
   }, {
@@ -1558,7 +1476,6 @@ function createWorkBook(post) {
   }
   ws.Cell(79, 1).String(data[79].v1).Style(myStyle5);
   ws.Cell(79, 8).String(data[79].v2).Style(myStyle5);
-
   ws.Cell(80, 1).String(data[80].v1).Style(myStyle5);
   ws.Cell(80, 3).String(data[80].v2).Style(myStyle5);
   ws.Cell(80, 5).String(data[80].v3).Style(myStyle5);
@@ -1566,7 +1483,6 @@ function createWorkBook(post) {
   ws.Cell(80, 9).String(data[80].v5).Style(myStyle5);
   ws.Cell(80, 10).String(data[80].v6).Style(myStyle5);
   ws.Cell(80, 11).String(data[80].v7).Style(myStyle5);
-
   ws.Cell(81, 3).String(data[81].v1).Style(myStyle5);
   ws.Cell(81, 5).String(data[81].v2).Style(myStyle5);
   ws.Cell(81, 8).String(data[81].v3).Style(myStyle5);
@@ -1576,25 +1492,19 @@ function createWorkBook(post) {
   ws.Cell(82, 5).String(data[82].v3).Style(myStyle5);
   ws.Cell(82, 6).String(data[82].v4).Style(myStyle5);
   ws.Cell(82, 8).String(data[82].v5).Style(myStyle5);
-
   ws.Cell(83, 1).String(data[83].v1).Style(myStyle5);
   ws.Cell(83, 3).String(data[83].v2).Style(myStyle5);
   ws.Cell(83, 8).String(data[83].v3).Style(myStyle5);
-
   ws.Cell(84, 1).String(data[84].v1).Style(myStyle5);
   ws.Cell(84, 3).String(data[84].v2).Style(myStyle5);
   ws.Cell(84, 8).String(data[84].v3).Style(myStyle5);
-
   ws.Cell(85, 1).String(data[85].v1).Style(myStyle5);
   ws.Cell(85, 3).String(data[85].v2).Style(myStyle5);
   ws.Cell(85, 4).String(data[85].v3).Style(myStyle5);
-
   ws.Cell(86, 1).String(data[86].v1).Style(myStyle5);
   ws.Cell(86, 3).String(data[86].v2).Style(myStyle5);
   ws.Cell(86, 4).String(data[86].v3).Style(myStyle5);
-
   ws.Cell(87, 2).String(data[87].v1).Style(myStyle5);
-
   for (var i = 87; i < 93; ++i) {
     ws.Cell(i, 1).String(data[i].v1).Style(myStyle4);
     ws.Cell(i, 2).String(data[i].v2).Style(myStyle4);
@@ -1602,12 +1512,10 @@ function createWorkBook(post) {
   }
   ws.Cell(93, 8).String(data[93].v1);
   ws.Cell(93, 10).String(data[93].v2);
-
   ws.Cell(94, 1).String(data[94].v1);
   ws.Cell(94, 4, 94, 5).String(data[94].v2).Style(myStyle2);
   ws.Cell(94, 6).String(data[94].v3);
   ws.Cell(94, 10, 94, 12).String(data[94].v4).Style(myStyle2);
-
   ws.Cell(95, 9).String(data[95].v1);
 
   //formatting cells in yellow
@@ -1660,33 +1568,38 @@ var onRequest = function(req, res) {
     });
     req.on('end', function() {
       var post = qs.parse(body);
+      console.log(post);
+      console.log(post[0]);
+      console.log(post[0].msg);
+      for (pr in post[0])
+        console.log(pr);
       if (post.path) {
         if (post.mypath) {
           path = post.mypath;
         }
         res.end(path);
+        return;
       }
-      if (post.msg == 'step 1'){
+      if (post[0].msg == 'step 1') {
         data1 = createWorkBook(post);
         console.log(data1);
         console.log('STEP 1');
-
-      }
-      else if (post.msg == 'step 2') {
+      } else if (post[post.length - 1].msg == 'step 2') {
         createSecondSheet(data1, post);
-        createFourthSheet(data1);
         console.log('STEP 2');
-
         // wb.write(path + "/" + token + ".xlsx");
-      } else if (post.msg == 'step 3') {
+      } else if (post[post.length - 1].msg == 'step 3') {
         createThirdSheet(data1, post);
-      // Synchronously write file
-      console.log('STEP 3');
-      } else {
-        final(post);
+        createFourthSheet(data1, post);
+        // Synchronously write file
         var token = uid(16);
         wb.write("./data/" + token + ".xlsx");
-        wb = ws = ws2 = ws3 = ws4 = '';
+        wb = ws0 = ws = ws2 = ws3 = ws4 = '';
+        console.log('STEP 3');
+      } else {
+        console.log('final step');
+        console.log(post);
+        final(post);
       }
       res.end();
     });
@@ -1694,5 +1607,4 @@ var onRequest = function(req, res) {
 };
 
 http.createServer(onRequest).listen(serverPort, serverAddress);
-
 console.log('Server running at ' + serverAddress + ":" + serverPort);

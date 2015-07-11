@@ -24,11 +24,13 @@ function getSelectedValue(id) {
 
 function getStep2Value(id) {
   var el = document.getElementById('parameter_row_' + id);
-  if (el.classList.contains('nonclickable')) {
-    return '';
-  } else if (el.classList.contains('tr_sel_disabled')) {
+  if (el.classList.contains('tr_sel_disabled') || el.classList.contains('nonclickable'))
+    return ' ';
+  // if (el.classList.contains('nonclickable'))
+  //   return '+';
+  if (el.classList.contains('tr_sel_red'))
     return '-';
-  } else if (el.classList.contains('tr_sel_red')) return '+';
+  return '+';
   // if (el.classList.contains('tr_sel_disabled') || el.classList.contains('nonclickable')) {
   //   return '+';
   // } else if (el.classList.contains('tr_sel_red')) return '';
@@ -36,31 +38,47 @@ function getStep2Value(id) {
 
 function getRadioValue() {
   if (document.getElementById('radio_0').checked == true)
-    return 'Первичная';
-  else if (document.getElementById('radio_1').checked == true)
-    return 'Повторная';
+    return '1';
+  // else if (document.getElementById('radio_1').checked == true)
+  return '2';
 }
 
 function getResult() {
   if (document.getElementsByClassName('zakluchenie_variant zakluchenie_da')[0].style.display == "")
     return true;
-  else return false;
+  return false;
+}
+
+function diagnisticResults() {
+  var data = [];
+  var array = document.querySelectorAll('tr[id^="diagnostika_row_"]');
+  for (var i = 0; i < array.length; i++) {
+    var temp = array[i].children;
+    var obj = {
+      v1: temp[0].firstChild.value,
+      v2: temp[1].firstChild.value,
+      v3: temp[2].firstChild.value,
+      v4: temp[3].firstChild.value,
+      v5: temp[4].firstChild.value
+    };
+    data.push(obj);
+  }
+  return data;
 }
 
 console.log("new");
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
+  var validity = repeat = '';
   console.log("EURIKA!!");
   console.log(sender);
-  // var data = {msg: 'lol'};
-  // var step = document.getElementsByClassName("sel")[1].getElementsByClassName('kvadr')[0].innerHTML;
   try {
     var step = document.getElementsByClassName("sel")[1].getElementsByClassName('kvadr')[0].innerHTML;
   } catch (e) {
     console.log(e);
   }
   if (step == '1') {
-    var data = {
+    var data = [{
       msg: "step 1",
       firstName: ge("I_LICA"),
       secondName: ge("F_LICA"),
@@ -83,9 +101,10 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
       regNOMER: ge('SVID_O_REG_NOMER'),
       regKOGDA: ge('SVID_O_REG_KOGDA'),
       regKEM: geName('SVID_O_REG_KEM')
-    };
+    }];
   } else if (step == '2') {
-    data = {
+    var data = diagnisticResults();
+    var diagnostic = {
       msg: "step 2",
       _1: getStep2Value(1),
       _2: getStep2Value(2),
@@ -153,39 +172,32 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
       _64: getStep2Value(64),
       _65: getStep2Value(65)
     }
+    data.push(diagnostic);
   } else if (step == '3') {
-    // data = {
-    //   msg: 'step 3',
-    //   SROK_DEISTV: ge('SROK_DEISTV'),
-    //   check: getRadioValue(),
-    //
-    // };
-    var temp;
     if (getResult() == true)
-      temp = ge('SROK_DEISTV');
-    else temp = ge('PROITI_POVTORNO_DO');
-    data = {
+      validity = ge('SROK_DEISTV');
+    else repeat = geName('PROITI_POVTORNO_DO');
+    data = [{
       msg: 'step 3',
-      SROK_DEISTV: ge('SROK_DEISTV'),
       result: getResult(),
-      validity: temp,
-      special: ge('OSOB_OTMETKI'),
-      check: getRadioValue(),
-      date: document.getElementsByClassName('gray_tbl')[2].getElementsByTagName('td')[1].innerHTML,
-      expert: document.getElementById('expert_container').childNodes[0]
-    };
+      validity: validity,
+      repeat: repeat,
+      notes: ge('OSOB_OTMETKI'),
+      checkType: getRadioValue(),
+      date: document.getElementsByClassName('gray_tbl')[6].getElementsByTagName('td')[1].innerHTML,
+      // expert: document.getElementById('expert_container').childNodes[0]
+      expert: document.getElementsByClassName('top_block_2')[0].getElementsByTagName('strong')[0].innerHTML
+    }];
   } else {
-    data = {
+    data = [{
       reg: document.getElementsByClassName('second_cont')[0].getElementsByTagName('h2')[1].getElementsByTagName('strong')[0].innerHTML
-    }
+    }];
   }
   request.onreadystatechange = function() {
     if (request.readyState == 4 && request.status == 200) {
       console.log(request.responseText);
       console.log('response received');
-      sendResponse({
-        farewell: "goodbye"
-      });
+      sendResponse();
     }
   }
   console.log('go!');
