@@ -1,11 +1,10 @@
 var http = require('http');
 var url = require("url");
 var qs = require('querystring');
-var uid = require('rand-token').uid;
 var fs = require('fs');
 var serverPort = '5000';
 var serverAddress = '127.0.0.1';
-var wb, ws0, ws, ws2, ws3, ws4, ws5, data1;
+var wb, wsOpts, ws0, ws, ws2, ws3, ws4, ws5, data1, diagnosticIssues, failedRequirements, notes;
 try {
   var xl = require('excel4node');
 } catch (e) {
@@ -14,721 +13,7 @@ try {
 var path;
 fs.readFile('path.txt', function(err, data) {
   path = '' + data;
-  console.log(path);
 });
-
-function final(post) {
-  ws0.Cell(2, 27).String(post.reg);
-  ws2.Cell(2, 5).String(post.reg);
-  ws3.Cell(44, 3).String(post.reg);
-}
-
-function createFourthSheet(data1) {
-  var myStyle = wb.Style();
-  myStyle.Font.Size(12);
-  myStyle.Font.Family('Times New Roman');
-  myStyle.Font.Alignment.Vertical('center');
-  myStyle.Font.Alignment.Horizontal('left');
-  myStyle.Font.WrapText();
-  var myStyle2 = wb.Style();
-  myStyle2.Font.Size(12);
-  myStyle2.Font.Family('Times New Roman');
-  myStyle2.Font.Alignment.Vertical('center');
-  myStyle2.Font.Alignment.Horizontal('center');
-  myStyle2.Font.WrapText();
-  var myBorder = wb.Style();
-  myBorder.Border({
-    top: {
-      style: 'thick',
-      color: '0000FF'
-    },
-    left: {
-      style: 'thick',
-      color: '0000FF'
-    },
-    right: {
-      style: 'thick',
-      color: '0000FF'
-    },
-    bottom: {
-      style: 'thick',
-      color: '0000FF'
-    }
-  });
-
-  ws4.Column(2).Width(22);
-  ws4.Column(7).Width(12);
-  ws4.Column(8).Width(10);
-  ws4.Column(9).Width(10);
-
-  ws4.Cell(1, 1, 1, 7, true).String('Получатель: Индивидуальный предприниматель Пополитов Руслан Александрович');
-  ws4.Cell(2, 1, 2, 7, true).String('Банк получателя: РОССИЙСКИЙ НАЦИОНАЛЬНЫЙ КОММЕРЧЕСКИЙ БАНК (ПАО)');
-  ws4.Cell(3, 1, 3, 7, true).String('р/с: 40802810741200000048');
-  ws4.Cell(4, 1, 4, 7, true).String('к/с: 30101810400000000607 в ОПЕРУ МГТУ Банка России');
-  ws4.Cell(5, 1, 5, 7, true).String('БИК: 044525607  ИНН: 920100006420');
-  ws4.Cell(6, 1, 6, 2, true).Format.Font.Bold().Format.Font.Alignment.Horizontal('center').String('Плательщик');
-  ws4.Cell(6, 3, 6, 7, true).Format.Font.Bold().Format.Font.Alignment.Horizontal('center').String(data1[9].v2);
-  ws4.Cell(7, 1, 7, 2, true).Format.Font.Alignment.Horizontal('center').String('моб. тел.');
-  ws4.Cell(7, 3, 7, 7, true).Format.Font.Alignment.Horizontal('center').String('+79788987206');
-  ws4.Cell(8, 1, 8, 2, true).Format.Font.Alignment.Horizontal('center').String('Вид платежа');
-  ws4.Cell(8, 3, 8, 7, true).Format.Font.Alignment.Horizontal('center').String('за услуги по проведению технического  контроля');
-  ws4.Cell(9, 1, 9, 2, true).Format.Font.Alignment.Horizontal('center').String('Cумма'); //wtf
-  ws4.Cell(10, 1, 10, 2, true).Format.Font.Alignment.Horizontal('center').String(''); //wtf
-  ws4.Cell(14, 1, 14, 9, true).String('Расписка в получении денежных средств').Style(myStyle2);
-  ws4.Row(17).Height(40);
-  ws4.Cell(16, 1, 17, 9, true).String('Я,  Соломатов Алексей Валерьевич, во исполнение поручения, совершенного в порядке предусмотренного главой 49 Гражданского кодекса РФ и установленном ст.16 закона Российской Федерации от 07.07.2011 г. №170-ФЗ  "О техническом контроле транспортных средств и о внесении изменений в отдельные законодательные акты РФ",')
-    .Style(myStyle);
-  ws4.Cell(18, 1).String('принял от').Style(myStyle);
-  ws4.Cell(18, 2, 18, 3, true).String(data1[9].v2).Style(myStyle2);
-  ws4.Cell(18, 4, 18, 5, true).String('денежные средства в размере').Style(myStyle); //wtf
-  ws4.Cell(18, 8, 18, 9, true).String('для оплаты услуг по').Style(myStyle);
-  ws4.Cell(19, 1, 19, 9, true).String(' техническому контролю. Обязуюсь внести их в полном объеме на расчетный счет ИП Пополитов Р.А. за проведение').Style(myStyle);
-  ws4.Cell(20, 1, 20, 2, true).String(' технического контроля автомобиля ').Style(myStyle);
-  ws4.Cell(20, 3, 20, 4, true).String(data1[4].v4).Style(myStyle2);
-  ws4.Cell(20, 5, 20, 6, true).String('гос. регистрационный знак').Style(myStyle);
-  ws4.Cell(20, 7).String(data1[4].v2).Style(myStyle2);
-  ws4.Cell(21, 1, 21, 9, true).String(' в течение 3-х дней. С условиями приема указанной в платежном документе суммы, в т.ч. с суммой взымаемой платы ').Style(myStyle);
-  ws4.Cell(22, 1, 22, 9, true).String('за услуги  банка, ознакомлен и согласен.').Style(myStyle);
-  ws4.Cell(25, 2).String(post.date).Style(myStyle2);
-  ws4.Cell(25, 6, 25, 9, true).String(' ________________ /А.В. Соломатов/').Style(myStyle);
-  ws4.Cell(28, 1, 28, 9, true).String('_________________________________________________________________________________________________________________________').Style(myStyle);
-  ws4.Cell(30, 1, 30, 9, true).String('Поручение на оплату услуг').Style(myStyle2);
-  ws4.Cell(32, 1).String('Я,  ').Style(myStyle).Format.Font.Alignment.Horizontal('right');
-  ws4.Cell(32, 2, 32, 3, true).String(data1[9].v2).Style(myStyle);
-  ws4.Cell(32, 4, 32, 9, true).String('руководствуясь ст.16 закона Российской Федерации от 07.07.2011 г. №170-ФЗ ').Style(myStyle);
-  ws4.Cell(33, 1, 33, 9, true).String('"О техническом осмотре транспортных средств и о внесении изменений в отдельные законодательные акты РФ",').Style(myStyle);
-  ws4.Cell(34, 1, 34, 3, true).String('представляя для технического контроля автомобиль ').Style(myStyle);
-  ws4.Cell(34, 4, 34, 5, true).String(data1[4].v4).Style(myStyle2);
-  ws4.Cell(34, 6, 34, 7, true).String('гос. регистрационный знак').Style(myStyle2);
-  ws4.Cell(34, 8, 34, 9, true).String(data1[4].v2).Style(myStyle);
-  ws4.Cell(35, 1, 35, 9, true).String('в порядке, предусмотренном главой 49 Гражданского кодекса РФ поручаю внести за меня плату за оказания услуг').Style(myStyle);
-  ws4.Cell(36, 1).String(' в размере').Style(myStyle); //wtf
-  ws4.Cell(37, 1, 37, 9, true).String('С условиями приема указанной в платежном документе суммы, в т.ч. с суммой взымаемой платы за услуги банка, ознакомлен и согласен.').Style(myStyle);
-  ws4.Cell(39, 2).String(post.date).Style(myStyle2);
-  ws4.Cell(39, 5, 39, 9, true).String('____________________/' + data1[9].v2).Style(myStyle);
-  //Border
-  ws4.Cell(1, 1, 40, 9).Style(myBorder);
-}
-
-function createThirdSheet(data1, post) {
-  ws3.Column(1).Width(10);
-  ws3.Column(2).Width(12);
-  ws3.Column(3).Width(10);
-  ws3.Column(4).Width(20);
-  ws3.Column(5).Width(15);
-  ws3.Column(6).Width(15);
-  ws3.Column(7).Width(17);
-
-  ws3.Row(48).Height(30);
-  //стили
-  var myStyle = wb.Style();
-  myStyle.Font.Size(12);
-  myStyle.Font.Family('Times New Roman');
-  myStyle.Font.Alignment.Vertical('center');
-  myStyle.Font.Alignment.Horizontal('center');
-  myStyle.Font.WrapText();
-
-  var myStyle2 = wb.Style();
-  myStyle2.Fill.Color('C5F8FF');
-  myStyle2.Fill.Pattern('solid');
-  myStyle2.Font.Size(12);
-  myStyle2.Font.Family('Times New Roman');
-  myStyle2.Font.Alignment.Vertical('center');
-  myStyle2.Font.Alignment.Horizontal('center');
-  myStyle2.Font.WrapText();
-  myStyle2.Border({
-    left: {
-      style: 'thin',
-      color: 'D0D0D0'
-    },
-    right: {
-      style: 'thin',
-      color: 'D0D0D0'
-    },
-    top: {
-      style: 'thin',
-      color: 'D0D0D0'
-    },
-    bottom: {
-      style: 'thin',
-      color: 'D0D0D0'
-    }
-  });
-  var myStyle3 = wb.Style();
-  myStyle3.Font.Size(12);
-  myStyle3.Font.Family('Times New Roman');
-  myStyle3.Font.Alignment.Vertical('center');
-  myStyle3.Font.Alignment.Horizontal('left');
-  myStyle3.Font.WrapText();
-
-  var myStyle4 = wb.Style();
-  myStyle4.Font.Size(11);
-  myStyle4.Font.Family('Times New Roman');
-  myStyle4.Font.WrapText();
-
-  var leftBorder = wb.Style();
-  leftBorder.Border({
-    left: {
-      style: 'thick',
-      color: '0000FF'
-    }
-  });
-  var bottomBorder = wb.Style();
-  bottomBorder.Border({
-    bottom: {
-      style: 'thick',
-      color: '0000FF'
-    }
-  });
-  //Журнал регистрации
-  ws0.Cell(2, 22).String(post.date);
-  ws0.Cell(2, 23).String(post.validity);
-  //Первый лист
-  if (post.checkType == true)
-    ws.Cell(3, 3).String('X');
-  else if (post.checkType == false)
-    ws.Cell(3, 6).String('X');
-  if (post.result == true)
-    ws.Cell(93, 8, 93, 9).Style(myStyle2);
-  else
-    ws.Cell(93, 10, 93, 11).Style(myStyle2);
-  ws.Cell(94, 4).String(post.date);
-  ws.Cell(94, 10).String(post.expert);
-  //Второй лист срок действия
-  ws2.Cell(2, 14).String(post.validity);
-  console.log('lol123');
-  console.log(post.checkType);
-  if (post.checkType == '1') {
-    console.log('CHeCK TRUE');
-    ws2.Cell(5, 5).String('X');
-  } else if (post.checkType == '2') {
-    console.log('CHECK FALSE');
-    ws2.Cell(5, 13).String('X');
-  }
-  ws2.Cell(2, 14).String(post.validity);
-  ws2.Cell(3, 6).String(post.expert);
-  //объединение ячеек
-  ws3.Cell(1, 1, 1, 7, true).String('Результаты диагностирования').Style(myStyle);
-  ws3.Cell(2, 1, 2, 6, true).String('Параметры, по которым установлено несоответствие').Style(myStyle);
-  ws3.Cell(2, 7, 3, 7, true).String('Пункт диагностической карты').Style(myStyle);
-  ws3.Cell(3, 1).String('Нижняя граница').Style(myStyle);
-  ws3.Cell(3, 2).String('Результат проверки').Style(myStyle);
-  ws3.Cell(3, 3).String('Верхняя граница').Style(myStyle);
-  ws3.Cell(3, 4, 3, 6, true).String('Наименование параметра').Style(myStyle);
-  ws3.Cell(3, 7).String('Пункт диагностической карты').Style(myStyle);
-  for (var i = 4; i < 14; ++i) {
-    ws3.Cell(i, 1).Style(myStyle);
-    ws3.Cell(i, 2).Style(myStyle);
-    ws3.Cell(i, 3).Style(myStyle);
-    ws3.Cell(i, 4, i, 6, true).Style(myStyle);
-    ws3.Cell(i, 7).Style(myStyle);
-  }
-  ws3.Cell(14, 1, 14, 7, true).String('Невыполненные требования').Style(myStyle);
-  ws3.Cell(15, 1, 15, 2, true).String('Предмет проверки (узел, деталь, агрегат)').Style(myStyle);
-  ws3.Cell(15, 3, 15, 6, true).String('Содержание невыполненного требования (с указанием нормативного источника)').Style(myStyle);
-  ws3.Cell(15, 7).String('Пункт диагностической карты').Style(myStyle);
-  for (var i = 16; i < 27; ++i) {
-    ws3.Cell(i, 1, i, 2, true).Style(myStyle);
-    ws3.Cell(i, 3, i, 6, true).Style(myStyle);
-    ws3.Cell(i, 7).Style(myStyle);
-  }
-  ws3.Cell(27, 1, 27, 7, true).Format.Font.Alignment.Horizontal('left').String('Примечания:');
-  ws3.Cell(28, 1, 32, 7, true).String(post.notes).Style(myStyle3);
-  ws3.Cell(33, 1, 33, 7, true).String('Данные транспортного средства').Style(myStyle);
-  ws3.Cell(34, 1, 34, 2, true).String(data1[7].v5).Style(myStyle3);
-  ws3.Cell(34, 3, 34, 4, true).String(data1[7].v6).Style(myStyle2);
-  ws3.Cell(34, 5, 35, 6, true).String(data1[6].v5).Style(myStyle3);
-  ws3.Cell(34, 7, 35, 7, true).String(data1[6].v6).Style(myStyle2);
-  ws3.Cell(35, 1, 35, 2, true).String(data1[4].v5).Style(myStyle3);
-  ws3.Cell(35, 3, 35, 4, true).String(data1[4].v6).Style(myStyle2);
-  ws3.Cell(36, 1, 36, 2, true).String(data1[5].v5).Style(myStyle3);
-  ws3.Cell(36, 3, 36, 4, true).String(data1[5].v6).Style(myStyle2);
-  ws3.Cell(36, 5, 37, 6, true).String(data1[3].v5).Style(myStyle3);
-  ws3.Cell(36, 7, 37, 7, true).String(data1[3].v6).Style(myStyle2);
-  ws3.Cell(37, 1, 37, 2, true).String(data1[7].v3).Style(myStyle3);
-  ws3.Cell(37, 3, 37, 4, true).String(data1[7].v4).Style(myStyle2);
-
-  ws3.Cell(38, 1, 38, 5, true).String('Заключение о возможности/невозможности эксплуатации транспортного средства').Style(myStyle4);
-  ws3.Cell(39, 1, 39, 5, true).String('Results of the roadworthiness inspection').Format.Font.Family('Times New Roman');
-  ws3.Cell(38, 6, 39, 6, true).String('Возможно   Passed').Style(myStyle);
-  ws3.Cell(38, 7, 39, 7, true).String('Невозможно    Failed').Style(myStyle);
-  if (post.result == true)
-    ws3.Cell(38, 6).Style(myStyle2);
-  else
-    ws3.Cell(38, 7).Style(myStyle2);
-  ws3.Cell(46, 3).String(post.date).Style(myStyle);
-  ws3.Cell(40, 1, 42, 5, true).String('Пункты диагностической карты, требующие повторной проверки:').Format.Font.Alignment.Vertical('top').Format.Font.Family('Times New Roman');
-  ws3.Cell(40, 6, 41, 7, true).String('Повторный технический контроль пройти до:').Style(myStyle);
-  ws3.Cell(42, 6, 42, 7, true).String(post.repeat).Style(myStyle);
-  ws3.Cell(44, 1, 45, 2, true).Format.Font.Alignment.Horizontal('center').String('Номер в ЕАИСТО');
-  ws3.Cell(44, 3, 45, 4, true).Style(myStyle2);
-  ws3.Cell(46, 1, 46, 2, true).Format.Font.Alignment.Horizontal('center').String('Дата проверки ТС:');
-  ws3.Cell(46, 3, 46, 4, true).String(post.date).Style(myStyle2);
-  ws3.Cell(46, 6).String('Печать         Stamp').Style(myStyle);
-  ws3.Cell(47, 1, 47, 3, true).String('Ф.И.О. технического эксперта');
-  ws3.Cell(47, 4).String(post.expert).Style(myStyle2);
-  ws3.Cell(48, 1, 48, 3, true).String('Подпись                                   Signature').Style(myStyle);
-  //Border
-  ws3.Cell(1, 8, 49, 8).Style(leftBorder);
-  ws3.Cell(49, 1, 49, 7).Style(bottomBorder);
-}
-
-function createSecondSheet(data1, post) {
-  var data = [{}, {
-    v1: ""
-  }, {
-    v1: ""
-  }, {
-    v1: ""
-  }, {
-    v1: ""
-  }, {
-    v1: 'Первичная проверка',
-    v2: '', //wtf
-    v3: 'Повторная проверка',
-    v4: '' //wtf
-  }, {
-    v1: 'Регистрационный знак ТС: ',
-    v2: data1[4].v2,
-    v3: 'Марка, модель ТС:',
-    v4: data1[4].v4
-  }, {
-    v1: 'VIN',
-    v2: data1[5].v2,
-    v3: 'Категория ТС:',
-    v4: data1[5].v4
-  }, {
-    v1: 'Номер шасси, рамы:',
-    v2: data1[6].v2,
-    v3: 'Год выпуска ТС:',
-    v4: data1[6].v4
-  }, {
-    v1: 'Номер кузова:',
-    v2: data1[7].v2,
-    v3: '',
-    v4: ''
-  }, {
-    v1: 'СРТС или ПТС (серия, номер, выдан кем, когда):',
-    v2: data1[8].v2
-  }, {
-    v1: '№',
-    v2: 'Параметры и требования, предъявляемые к транспортным средствам при проведении технического контроля',
-    v3: '',
-    v4: '№',
-    v5: 'Параметры и требования, предъявляемые к транспортным средствам при проведении технического контроля',
-    v6: '',
-    v7: '№',
-    v8: 'Параметры и требования, предъявляемые к транспортным средствам при проведении технического контроля',
-    v9: ''
-  }, {
-    v1: '',
-    v2: 'I. Тормозные системы',
-    v3: '',
-    v4: '22.',
-    v5: 'Наличие и расположение фар и сигнальных фонарей в местах, предусмотренных конструкцией',
-    v6: '',
-    v7: '42.',
-    v8: 'Работоспособность запоров бортов грузовой платформы и запоров горловин цистерн',
-    v9: ''
-  }, {
-    v1: '1',
-    v2: 'Соответствие показателей эффективности торможения и устойчивости торможения',
-    v3: '',
-    v4: '',
-    v5: 'IV. Стеклоочистители и стеклоомыватели',
-    v6: '',
-    v7: '43.',
-    v8: 'Работоспособность аварийного выключателя дверей и сигнала требования остановки',
-    v9: ''
-  }, {
-    v1: '2.',
-    v2: 'Соответствие разности тормозных сил установленным требованиям',
-    v3: '',
-    v4: '23.',
-    v5: 'Наличие  стеклоочистителя и форсунки стеклоомывателя ветрового стекла',
-    v6: '',
-    v7: '44.',
-    v8: 'Работоспособность аварийных выходов, приборов внутреннего освещения салона, привода управления дверями и сигнализации их работы',
-    v9: ''
-  }, {
-    v1: '3.',
-    v2: 'Работоспособность рабочей тормозной системы автопоездов с пневматическим тормозным приводом в режиме аварийного (автоматического) торможения',
-    v3: '',
-    v4: '24.',
-    v5: 'Обеспечение стеклоомывателем подачи жидкости в зоны очистки стекла',
-    v6: '',
-    v7: '45.',
-    v8: 'Наличие работоспособного звукового сигнального прибора',
-    v9: ''
-  }, {
-    v1: '4.',
-    v2: 'Отсутствие утечек сжатого воздуха из колесных тормозных камер',
-    v3: '',
-    v4: '25.',
-    v5: 'Работоспособность стеклоочистителей и стеклоомывателей',
-    v6: '',
-    v7: '46.',
-    v8: 'Наличие обозначений аварийных выходов и табличек по правилам их использования. Обеспечение свободного доступа к аварийным выходам',
-    v9: ''
-  }, {
-    v1: '5.',
-    v2: 'Отсутствие подтеканий тормозной жидкости, нарушения герметичности трубопроводов или соединений в гидравлическом тормозном приводе',
-    v3: '',
-    v4: '',
-    v5: 'V. Шины и колеса',
-    v6: '',
-    v7: '47.',
-    v8: 'Наличие задних и боковых  защитных устройств, соответствие их нормам',
-    v9: ''
-  }, {
-    v1: '6.',
-    v2: 'Отсутствие коррозии, грозящей потерей герметичности или разрушением',
-    v3: '',
-    v4: '26.',
-    v5: 'Соответствие высоты рисунка протектора шин установленным требованиям',
-    v6: '',
-    v7: '48.',
-    v8: 'Работоспособность автоматического замка, ручной и автоматической блокировки седельно-сцепного устройства. Отсутствие видимых повреждений сцепных устройств',
-    v9: ''
-  }, {
-    v1: '7.',
-    v2: 'Отсутствие механических повреждений тормозных трубопроводов',
-    v3: '',
-    v4: '27.',
-    v5: 'Отсутствие признаков непригодности шин к эксплуатации',
-    v6: '',
-    v7: '49.',
-    v8: 'Наличие работоспособных предохранительных приспособлений у одноосных прицепов (за исключением роспусков) и прицепов, не оборудованных рабочей тормозной системой',
-    v9: ''
-  }, {
-    v1: '8.',
-    v2: 'Отсутствие трещин остаточной деформации деталей тормозного привода',
-    v3: '',
-    v4: '28.',
-    v5: 'Наличие всех болтов или гаек крепления дисков и ободьев колес',
-    v6: '',
-    v7: '50.',
-    v8: 'Оборудование прицепов (за исключением одноосных и роспусков) исправным устройством, поддерживающим сцепную петлю дышла в положении, облегчающем сцепку и расцепку с тяговым автомобилем',
-    v9: ''
-  }, {
-    v1: '9.',
-    v2: 'Исправность средств сигнализации и контроля тормозных систем',
-    v3: '',
-    v4: '29.',
-    v5: 'Отсутствие трещин на дисках и ободьях колес',
-    v6: '',
-    v7: '51.',
-    v8: 'Отсутствие продольного люфта в беззазорных тягово-сцепных устройствах с тяговой вилкой для сцепленного с прицепом тягача',
-    v9: ''
-  }, {
-    v1: '10.',
-    v2: 'Отсутствие набухания тормозных шлангов под давлением, трещин и видимых мест перетирания',
-    v3: '',
-    v4: '30.',
-    v5: 'Отсутствие видимых нарушений формы и размеров крепежных отверстий в дисках колес',
-    v6: '',
-    v7: '52.',
-    v8: 'Обеспечение тягово-сцепными устройствами легковых автомобилей беззазорной сцепки сухарей замкового устройства с шаром',
-    v9: ''
-  }, {
-    v1: '11.',
-    v2: 'Расположение и длина соединительных шлангов пневматического тормозного привода автопоездов',
-    v3: '',
-    v4: '31.',
-    v5: 'Установка шин на транспортное средство в соответствии с требованиями',
-    v6: '',
-    v7: '53.',
-    v8: 'Соответствие размерных характеристик сцепных устройств установленным требованиям',
-    v9: ''
-  }, {
-    v1: '',
-    v2: 'II. Рулевое управление',
-    v3: '',
-    v4: '',
-    v5: 'VI. Двигатель и его системы',
-    v6: '',
-    v7: '54.',
-    v8: 'Оснащение транспортных средств исправными ремнями безопасности',
-    v9: ''
-  }, {
-    v1: '12.',
-    v2: 'Работоспособность усилителя рулевого управления. Плавность изменения усилия при повороте рулевого колеса',
-    v3: '',
-    v4: '32.',
-    v5: 'Соответствие содержания загрязняющих веществ в отработавших газах транспортных средств установленным требованиям',
-    v6: '',
-    v7: '55.',
-    v8: 'Наличие знака аварийной остановки',
-    v9: ''
-  }, {
-    v1: '13.',
-    v2: 'Отсутствие самопроизвольного поворота рулевого колеса с усилителем рулевого управления от нейтрального положения при работающем двигателе',
-    v3: '',
-    v4: '33.',
-    v5: 'Отсутствие подтекания и каплепадения топлива в системе питания',
-    v6: '',
-    v7: '56.',
-    v8: 'Наличие не менее двух противооткатных упоров',
-    v9: ''
-  }, {
-    v1: '14.',
-    v2: 'Отсутствие  превышения предельных значений суммарного люфта в рулевом управлении',
-    v3: '',
-    v4: '34.',
-    v5: 'Работоспособность запорных устройств и устройств перекрытия топлива',
-    v6: '',
-    v7: '57.',
-    v8: 'Наличие огнетушителей, соответствующих установленным требованиям',
-    v9: ''
-  }, {
-    v1: '15.',
-    v2: 'Отсутствие повреждения и полная комплектность деталей крепления рулевой колонки и картера рулевого механизма',
-    v3: '',
-    v4: '35.',
-    v5: 'Герметичность системы питания транспортных средств, работающих на газе. Соответствие газовых баллонов установленным требованиям',
-    v6: '',
-    v7: '58.',
-    v8: 'Надежное крепление поручней в автобусах, запасного колеса, аккумуляторной батареи, сидений, огнетушителей и медицинской аптечки',
-    v9: ''
-  }, {
-    v1: '16.',
-    v2: 'Отсутствие следов остаточной деформации,  трещин и других дефектов в рулевом механизме и рулевом приводе',
-    v3: '',
-    v4: '36.',
-    v5: 'Соответствие нормам уровня шума выпускной системы',
-    v6: '',
-    v7: '59.',
-    v8: 'Работоспособность механизмов регулировки сидений',
-    v9: ''
-  }, {
-    v1: '17.',
-    v2: 'Отсутствие устройств, ограничивающих поворот рулевого колеса, не предусмотренных конструкцией',
-    v3: '',
-    v4: '',
-    v5: 'VII. Прочие элементы конструкции',
-    v6: '',
-    v7: '60.',
-    v8: 'Наличие надколесных грязезащитных устройств, отвечающих установленным требованиям',
-    v9: ''
-  }, {
-    v1: '',
-    v2: 'III. Внешние световые приборы',
-    v3: '',
-    v4: '37.',
-    v5: 'Наличие зеркал заднего вида в соответствии с требованиями',
-    v6: '',
-    v7: '61.',
-    v8: 'Соответствие вертикальной статической нагрузки на тяговое устройство автомобиля от сцепной петли одноосного прицепа (прицепа-роспуска) нормам',
-    v9: ''
-  }, {
-    v1: '18.',
-    v2: 'Соответствие устройств освещения и световой сигнализации  установленным требованиям',
-    v3: '',
-    v4: '38.',
-    v5: 'Отсутствие дополнительных предметов или покрытий, ограничивающих обзорность с места водителя. Соответствие полосы пленки в  верхней  части ветрового  стекла  установленным требованиям',
-    v6: '',
-    v7: '62.',
-    v8: 'Работоспособность держателя запасного колеса, лебедки и механизма подъема-опускания запасного колеса',
-    v9: ''
-  }, {
-    v1: '19.',
-    v2: 'Отсутствие разрушений  рассеивателей световых приборов',
-    v3: '',
-    v4: '39.',
-    v5: 'Соответствие норме светопропускания ветрового стекла, передних боковых стекол и стекол передних дверей',
-    v6: '',
-    v7: '63.',
-    v8: 'Работоспособность механизмов подъема и опускания опор и фиксаторов транспортного положения опор',
-    v9: ''
-  }, {
-    v1: '20.',
-    v2: 'Работоспособность и режим работы сигналов торможения',
-    v3: '',
-    v4: '40.',
-    v5: 'Отсутствие трещин на ветровом стекле в зоне очистки водительского стеклоочистителя',
-    v6: '',
-    v7: '64.',
-    v8: 'Соответствие каплепадения масел и рабочих жидкостей нормам',
-    v9: ''
-  }, {
-    v1: '21.',
-    v2: 'Соответствие углов регулировки и силы света фар установленным требованиям',
-    v3: '',
-    v4: '41.',
-    v5: 'Работоспособность замков дверей кузова,  кабины, механизмов регулировки и фиксирующих устройств сидений, устройства обогрева и обдува ветрового стекла, противоугонного устройства',
-    v6: '',
-    v7: '65.',
-    v8: 'Установка государственных регистрационных знаков в соответствии с требованиями',
-    v9: ''
-  }];
-  var myStyle = wb.Style();
-  myStyle.Font.Size(10);
-  myStyle.Font.Family('Times New Roman');
-  myStyle.Font.Alignment.Vertical('center');
-  myStyle.Font.Alignment.Horizontal('center');
-  myStyle.Font.WrapText();
-  var myStyle2 = wb.Style();
-  myStyle2.Fill.Color('C5F8FF');
-  myStyle2.Fill.Pattern('solid');
-  myStyle2.Font.Family('Times New Roman');
-  myStyle2.Font.Alignment.Vertical('center');
-  myStyle2.Font.Alignment.Horizontal('center');
-  myStyle2.Font.WrapText();
-  myStyle2.Border({
-    left: {
-      style: 'thin',
-      color: 'D0D0D0'
-    },
-    right: {
-      style: 'thin',
-      color: 'D0D0D0'
-    },
-    top: {
-      style: 'thin',
-      color: 'D0D0D0'
-    },
-    bottom: {
-      style: 'thin',
-      color: 'D0D0D0'
-    }
-  });
-  var leftBorder = wb.Style();
-  leftBorder.Border({
-    left: {
-      style: 'thick',
-      color: '0000FF'
-    }
-  });
-  var bottomBorder = wb.Style();
-  bottomBorder.Border({
-    bottom: {
-      style: 'thick',
-      color: '0000FF'
-    }
-  });
-
-  ws2.Column(1).Width(4);
-  ws2.Column(2).Width(10);
-  ws2.Column(3).Width(0);
-  ws2.Column(4).Width(10);
-  ws2.Column(5).Width(10);
-  ws2.Column(6).Width(3);
-  ws2.Column(7).Width(4);
-  ws2.Column(8).Width(15);
-  ws2.Column(9).Width(12);
-  ws2.Column(10).Width(0);
-  ws2.Column(11).Width(3);
-  ws2.Column(12).Width(4);
-  ws2.Column(13).Width(15);
-  ws2.Column(14).Width(15);
-  ws2.Column(15).Width(3);
-
-  //объединение ячеек
-  ws2.Cell(1, 1, 1, 15, true).Format.Font.Alignment.Horizontal('center').String('Диагностическая карта  Certificate of periodic technical inspection');
-  ws2.Cell(2, 1, 2, 4, true).Format.Font.Alignment.Horizontal('left').String('Регистрационный номер');
-  ws2.Cell(2, 5, 2, 7, true);
-  ws2.Cell(2, 12, 2, 13, true).Format.Font.Alignment.Horizontal('left').Format.Font.Bold().String('Срок действия до:');
-  ws2.Cell(2, 14, 2, 15, true);
-  ws2.Cell(3, 1, 3, 5, true).String('Оператор технического осмотра:');
-  ws2.Cell(3, 6, 3, 15, true);
-  ws2.Cell(4, 1, 4, 5, true).String('Пункт технического осмотра:');
-  ws2.Cell(4, 6, 4, 15, true);
-
-  for (var i = 5; i < 10; ++i) {
-    ws2.Cell(i, 1, i, 4, true).String(data[i].v1);
-    ws2.Cell(i, 5, i, 8, true).String(data[i].v2).Style(myStyle2);
-    ws2.Cell(i, 9, i, 12, true).String(data[i].v3);
-    ws2.Cell(i, 13, i, 15, true).String(data[i].v4).Style(myStyle2);
-  }
-
-  ws2.Cell(10, 1, 10, 6, true).String(data[10].v1).Style(myStyle);
-  ws2.Cell(10, 7, 10, 15, true).String(data[10].v2).Style(myStyle2);
-
-  //data for first column
-  ws2.Cell(13, 6).String(post[post.length - 1]._1).Style(myStyle2);
-  ws2.Cell(14, 6).String(post[post.length - 1]._2).Style(myStyle2);
-  ws2.Cell(15, 6).String(post[post.length - 1]._3).Style(myStyle2);
-  ws2.Cell(16, 6).String(post[post.length - 1]._4).Style(myStyle2);
-  ws2.Cell(17, 6).String(post[post.length - 1]._5).Style(myStyle2);
-  ws2.Cell(18, 6).String(post[post.length - 1]._6).Style(myStyle2);
-  ws2.Cell(19, 6).String(post[post.length - 1]._7).Style(myStyle2);
-  ws2.Cell(20, 6).String(post[post.length - 1]._8).Style(myStyle2);
-  ws2.Cell(21, 6).String(post[post.length - 1]._9).Style(myStyle2);
-  ws2.Cell(22, 6).String(post[post.length - 1]._10).Style(myStyle2);
-  ws2.Cell(23, 6).String(post[post.length - 1]._11).Style(myStyle2);
-  ws2.Cell(25, 6).String(post[post.length - 1]._12).Style(myStyle2);
-  ws2.Cell(26, 6).String(post[post.length - 1]._13).Style(myStyle2);
-  ws2.Cell(27, 6).String(post[post.length - 1]._14).Style(myStyle2);
-  ws2.Cell(28, 6).String(post[post.length - 1]._15).Style(myStyle2);
-  ws2.Cell(29, 6).String(post[post.length - 1]._16).Style(myStyle2);
-  ws2.Cell(30, 6).String(post[post.length - 1]._17).Style(myStyle2);
-  ws2.Cell(32, 6).String(post[post.length - 1]._18).Style(myStyle2);
-  ws2.Cell(33, 6).String(post[post.length - 1]._19).Style(myStyle2);
-  ws2.Cell(34, 6).String(post[post.length - 1]._20).Style(myStyle2);
-  ws2.Cell(35, 6).String(post[post.length - 1]._21).Style(myStyle2);
-  //data for second column
-  ws2.Cell(12, 11).String(post[post.length - 1]._22).Style(myStyle2);
-  ws2.Cell(14, 11).String(post[post.length - 1]._23).Style(myStyle2);
-  ws2.Cell(15, 11).String(post[post.length - 1]._24).Style(myStyle2);
-  ws2.Cell(16, 11).String(post[post.length - 1]._25).Style(myStyle2);
-  ws2.Cell(18, 11).String(post[post.length - 1]._26).Style(myStyle2);
-  ws2.Cell(19, 11).String(post[post.length - 1]._27).Style(myStyle2);
-  ws2.Cell(20, 11).String(post[post.length - 1]._28).Style(myStyle2);
-  ws2.Cell(21, 11).String(post[post.length - 1]._29).Style(myStyle2);
-  ws2.Cell(22, 11).String(post[post.length - 1]._30).Style(myStyle2);
-  ws2.Cell(23, 11).String(post[post.length - 1]._31).Style(myStyle2);
-  ws2.Cell(25, 11).String(post[post.length - 1]._32).Style(myStyle2);
-  ws2.Cell(26, 11).String(post[post.length - 1]._33).Style(myStyle2);
-  ws2.Cell(27, 11).String(post[post.length - 1]._34).Style(myStyle2);
-  ws2.Cell(28, 11).String(post[post.length - 1]._35).Style(myStyle2);
-  ws2.Cell(29, 11).String(post[post.length - 1]._36).Style(myStyle2);
-  ws2.Cell(31, 11).String(post[post.length - 1]._37).Style(myStyle2);
-  ws2.Cell(32, 11).String(post[post.length - 1]._38).Style(myStyle2);
-  ws2.Cell(33, 11).String(post[post.length - 1]._39).Style(myStyle2);
-  ws2.Cell(34, 11).String(post[post.length - 1]._40).Style(myStyle2);
-  ws2.Cell(35, 11).String(post[post.length - 1]._41).Style(myStyle2);
-  //data for third column
-  ws2.Cell(12, 15).String(post[post.length - 1]._42).Style(myStyle2);
-  ws2.Cell(13, 15).String(post[post.length - 1]._43).Style(myStyle2);
-  ws2.Cell(14, 15).String(post[post.length - 1]._44).Style(myStyle2);
-  ws2.Cell(15, 15).String(post[post.length - 1]._45).Style(myStyle2);
-  ws2.Cell(16, 15).String(post[post.length - 1]._46).Style(myStyle2);
-  ws2.Cell(17, 15).String(post[post.length - 1]._47).Style(myStyle2);
-  ws2.Cell(18, 15).String(post[post.length - 1]._48).Style(myStyle2);
-  ws2.Cell(19, 15).String(post[post.length - 1]._49).Style(myStyle2);
-  ws2.Cell(20, 15).String(post[post.length - 1]._50).Style(myStyle2);
-  ws2.Cell(21, 15).String(post[post.length - 1]._51).Style(myStyle2);
-  ws2.Cell(22, 15).String(post[post.length - 1]._52).Style(myStyle2);
-  ws2.Cell(23, 15).String(post[post.length - 1]._53).Style(myStyle2);
-  ws2.Cell(24, 15).String(post[post.length - 1]._54).Style(myStyle2);
-  ws2.Cell(25, 15).String(post[post.length - 1]._55).Style(myStyle2);
-  ws2.Cell(26, 15).String(post[post.length - 1]._56).Style(myStyle2);
-  ws2.Cell(27, 15).String(post[post.length - 1]._57).Style(myStyle2);
-  ws2.Cell(28, 15).String(post[post.length - 1]._58).Style(myStyle2);
-  ws2.Cell(29, 15).String(post[post.length - 1]._59).Style(myStyle2);
-  ws2.Cell(30, 15).String(post[post.length - 1]._60).Style(myStyle2);
-  ws2.Cell(31, 15).String(post[post.length - 1]._61).Style(myStyle2);
-  ws2.Cell(32, 15).String(post[post.length - 1]._62).Style(myStyle2);
-  ws2.Cell(33, 15).String(post[post.length - 1]._63).Style(myStyle2);
-  ws2.Cell(34, 15).String(post[post.length - 1]._64).Style(myStyle2);
-  ws2.Cell(35, 15).String(post[post.length - 1]._65).Style(myStyle2);
-
-  //opt
-  for (var i = 11; i < 36; i++) {
-    ws2.Row(i).Height(50);
-    ws2.Cell(i, 1).String(data[i].v1).Style(myStyle);
-    ws2.Cell(i, 2, i, 5, true).String(data[i].v2).Style(myStyle);
-    ws2.Cell(i, 7).String(data[i].v4).Style(myStyle);
-    ws2.Cell(i, 8, i, 9, true).String(data[i].v5).Style(myStyle);
-    ws2.Cell(i, 12).String(data[i].v7).Style(myStyle);
-    ws2.Cell(i, 13, i, 14, true).String(data[i].v8).Style(myStyle);
-  }
-  //Border
-  ws2.Cell(1, 16, 35, 16).Style(leftBorder);
-  ws2.Cell(35, 1, 35, 15).Style(bottomBorder);
-
-
-}
 
 function createWorkBook(post) {
   var options = {
@@ -738,7 +23,7 @@ function createWorkBook(post) {
   }
   wb = new xl.WorkBook(options);
 
-  var wsOpts = {
+  wsOpts = {
     margins: {
       left: 15
     },
@@ -758,10 +43,6 @@ function createWorkBook(post) {
 
   ws0 = wb.WorkSheet('Журнал регистрации ТС', wsOpts);
   ws = wb.WorkSheet('Первичный', wsOpts);
-  ws2 = wb.WorkSheet('ДК лист 1', wsOpts);
-  ws3 = wb.WorkSheet('ДК лист 2', wsOpts);
-  ws4 = wb.WorkSheet('квитанция', wsOpts);
-
   /*
     Styles
   */
@@ -872,35 +153,10 @@ function createWorkBook(post) {
     Code to generate page Журнал регистрации ТС
   */
   ws0.Column(1).Width(25);
-  // ws0.Column(2).Width(30);
   ws0.Column(3).Width(20);
   ws0.Column(4).Width(20);
-  // ws0.Column(5).Width(15);
   ws0.Column(6).Width(20);
-  // ws0.Column(7).Width(15);
-  // ws0.Column(8).Width(15);
-  // ws0.Column(9).Width(6);
-  // ws0.Column(10).Width(6);
-  // ws0.Column(11).Width(6);
-  // ws0.Column(12).Width(6);
-  // ws0.Column(13).Width(12);
-  // ws0.Column(14).Width(10);
-  // ws0.Column(15).Width(8);
-  // ws0.Column(16).Width(12);
-  // ws0.Column(17).Width(8);
-  // ws0.Column(18).Width(6);
-  // ws0.Column(19).Width(6);
   ws0.Column(20).Width(30);
-  // ws0.Column(21).Width(10);
-  // ws0.Column(22).Width(10);
-  // ws0.Column(23).Width(10);
-  // ws0.Column(24).Width(10);
-  // ws0.Column(25).Width(10);
-  // ws0.Column(26).Width(10);
-  // ws0.Column(27).Width(20);
-  // ws0.Column(28).Width(10);
-  // ws0.Column(29).Width(10);
-  // ws0.Column(30).Width(10);
 
   ws0.Cell(1, 1).String('РЕГИСТРАЦИОННЫЙ НОМЕР').Style(blackStyle);
   ws0.Cell(1, 2).String('Владелец ТС ').Style(blackStyle);
@@ -934,7 +190,7 @@ function createWorkBook(post) {
   ws0.Cell(1, 30).String('№ Счета').Style(blackStyle);
 
   // ws0.Cell(2, 1).String(post[]); //wtf
-  ws0.Cell(2, 2).String(post.firstName + " " + post.secondName + " " + post.lastName).Style(myStyle5);
+  ws0.Cell(2, 2).String(post.secondName + " " + post.firstName + " " + post.lastName).Style(myStyle5);
   ws0.Cell(2, 3).String(post.regPlate).Style(myStyle5);
   ws0.Cell(2, 4).String(post.vin).Style(myStyle5);
   ws0.Cell(2, 5).String(post.chassis).Style(myStyle5);
@@ -1079,17 +335,17 @@ function createWorkBook(post) {
     v2: post.regSERIA + " №" + post.regNOMER + " " + post.regKEM + " от " + post.regKOGDA
   }, {
     v1: "Владелец ТС:",
-    v2: post.firstName + " " + post.secondName + " " + post.lastName
+    v2: post.secondName + " " + post.firstName + " " + post.lastName
   }, {
     v1: "Влажность, %",
     v2: "Давление, кПА",
     v3: "Температура, С",
     v4: "Скорость ветра, м/с"
   }, {
-    v1: "50", //wtf
-    v2: "40", //wtf
-    v3: "30", //wtf
-    v4: "20" //wtf
+    v1: "50",
+    v2: "40",
+    v3: "30",
+    v4: "20"
   }, {
     v1: "№ в ДК",
     v2: "Параметры и требования, предъявляемые к транспортным средствам при проведении технического контроля",
@@ -1555,13 +811,742 @@ function createWorkBook(post) {
   return data;
 }
 
+function createSecondSheet(data1, post) {
+  ws2 = wb.WorkSheet('ДК лист 1', wsOpts);
+  var data = [{}, {
+    v1: ""
+  }, {
+    v1: ""
+  }, {
+    v1: ""
+  }, {
+    v1: ""
+  }, {
+    v1: 'Первичная проверка',
+    v2: '', //wtf
+    v3: 'Повторная проверка',
+    v4: '' //wtf
+  }, {
+    v1: 'Регистрационный знак ТС: ',
+    v2: data1[4].v2,
+    v3: 'Марка, модель ТС:',
+    v4: data1[4].v4
+  }, {
+    v1: 'VIN',
+    v2: data1[5].v2,
+    v3: 'Категория ТС:',
+    v4: data1[5].v4
+  }, {
+    v1: 'Номер шасси, рамы:',
+    v2: data1[6].v2,
+    v3: 'Год выпуска ТС:',
+    v4: data1[6].v4
+  }, {
+    v1: 'Номер кузова:',
+    v2: data1[7].v2,
+    v3: '',
+    v4: ''
+  }, {
+    v1: 'СРТС или ПТС (серия, номер, выдан кем, когда):',
+    v2: data1[8].v2
+  }, {
+    v1: '№',
+    v2: 'Параметры и требования, предъявляемые к транспортным средствам при проведении технического контроля',
+    v3: '',
+    v4: '№',
+    v5: 'Параметры и требования, предъявляемые к транспортным средствам при проведении технического контроля',
+    v6: '',
+    v7: '№',
+    v8: 'Параметры и требования, предъявляемые к транспортным средствам при проведении технического контроля',
+    v9: ''
+  }, {
+    v1: '',
+    v2: 'I. Тормозные системы',
+    v3: '',
+    v4: '22.',
+    v5: 'Наличие и расположение фар и сигнальных фонарей в местах, предусмотренных конструкцией',
+    v6: '',
+    v7: '42.',
+    v8: 'Работоспособность запоров бортов грузовой платформы и запоров горловин цистерн',
+    v9: ''
+  }, {
+    v1: '1',
+    v2: 'Соответствие показателей эффективности торможения и устойчивости торможения',
+    v3: '',
+    v4: '',
+    v5: 'IV. Стеклоочистители и стеклоомыватели',
+    v6: '',
+    v7: '43.',
+    v8: 'Работоспособность аварийного выключателя дверей и сигнала требования остановки',
+    v9: ''
+  }, {
+    v1: '2.',
+    v2: 'Соответствие разности тормозных сил установленным требованиям',
+    v3: '',
+    v4: '23.',
+    v5: 'Наличие  стеклоочистителя и форсунки стеклоомывателя ветрового стекла',
+    v6: '',
+    v7: '44.',
+    v8: 'Работоспособность аварийных выходов, приборов внутреннего освещения салона, привода управления дверями и сигнализации их работы',
+    v9: ''
+  }, {
+    v1: '3.',
+    v2: 'Работоспособность рабочей тормозной системы автопоездов с пневматическим тормозным приводом в режиме аварийного (автоматического) торможения',
+    v3: '',
+    v4: '24.',
+    v5: 'Обеспечение стеклоомывателем подачи жидкости в зоны очистки стекла',
+    v6: '',
+    v7: '45.',
+    v8: 'Наличие работоспособного звукового сигнального прибора',
+    v9: ''
+  }, {
+    v1: '4.',
+    v2: 'Отсутствие утечек сжатого воздуха из колесных тормозных камер',
+    v3: '',
+    v4: '25.',
+    v5: 'Работоспособность стеклоочистителей и стеклоомывателей',
+    v6: '',
+    v7: '46.',
+    v8: 'Наличие обозначений аварийных выходов и табличек по правилам их использования. Обеспечение свободного доступа к аварийным выходам',
+    v9: ''
+  }, {
+    v1: '5.',
+    v2: 'Отсутствие подтеканий тормозной жидкости, нарушения герметичности трубопроводов или соединений в гидравлическом тормозном приводе',
+    v3: '',
+    v4: '',
+    v5: 'V. Шины и колеса',
+    v6: '',
+    v7: '47.',
+    v8: 'Наличие задних и боковых  защитных устройств, соответствие их нормам',
+    v9: ''
+  }, {
+    v1: '6.',
+    v2: 'Отсутствие коррозии, грозящей потерей герметичности или разрушением',
+    v3: '',
+    v4: '26.',
+    v5: 'Соответствие высоты рисунка протектора шин установленным требованиям',
+    v6: '',
+    v7: '48.',
+    v8: 'Работоспособность автоматического замка, ручной и автоматической блокировки седельно-сцепного устройства. Отсутствие видимых повреждений сцепных устройств',
+    v9: ''
+  }, {
+    v1: '7.',
+    v2: 'Отсутствие механических повреждений тормозных трубопроводов',
+    v3: '',
+    v4: '27.',
+    v5: 'Отсутствие признаков непригодности шин к эксплуатации',
+    v6: '',
+    v7: '49.',
+    v8: 'Наличие работоспособных предохранительных приспособлений у одноосных прицепов (за исключением роспусков) и прицепов, не оборудованных рабочей тормозной системой',
+    v9: ''
+  }, {
+    v1: '8.',
+    v2: 'Отсутствие трещин остаточной деформации деталей тормозного привода',
+    v3: '',
+    v4: '28.',
+    v5: 'Наличие всех болтов или гаек крепления дисков и ободьев колес',
+    v6: '',
+    v7: '50.',
+    v8: 'Оборудование прицепов (за исключением одноосных и роспусков) исправным устройством, поддерживающим сцепную петлю дышла в положении, облегчающем сцепку и расцепку с тяговым автомобилем',
+    v9: ''
+  }, {
+    v1: '9.',
+    v2: 'Исправность средств сигнализации и контроля тормозных систем',
+    v3: '',
+    v4: '29.',
+    v5: 'Отсутствие трещин на дисках и ободьях колес',
+    v6: '',
+    v7: '51.',
+    v8: 'Отсутствие продольного люфта в беззазорных тягово-сцепных устройствах с тяговой вилкой для сцепленного с прицепом тягача',
+    v9: ''
+  }, {
+    v1: '10.',
+    v2: 'Отсутствие набухания тормозных шлангов под давлением, трещин и видимых мест перетирания',
+    v3: '',
+    v4: '30.',
+    v5: 'Отсутствие видимых нарушений формы и размеров крепежных отверстий в дисках колес',
+    v6: '',
+    v7: '52.',
+    v8: 'Обеспечение тягово-сцепными устройствами легковых автомобилей беззазорной сцепки сухарей замкового устройства с шаром',
+    v9: ''
+  }, {
+    v1: '11.',
+    v2: 'Расположение и длина соединительных шлангов пневматического тормозного привода автопоездов',
+    v3: '',
+    v4: '31.',
+    v5: 'Установка шин на транспортное средство в соответствии с требованиями',
+    v6: '',
+    v7: '53.',
+    v8: 'Соответствие размерных характеристик сцепных устройств установленным требованиям',
+    v9: ''
+  }, {
+    v1: '',
+    v2: 'II. Рулевое управление',
+    v3: '',
+    v4: '',
+    v5: 'VI. Двигатель и его системы',
+    v6: '',
+    v7: '54.',
+    v8: 'Оснащение транспортных средств исправными ремнями безопасности',
+    v9: ''
+  }, {
+    v1: '12.',
+    v2: 'Работоспособность усилителя рулевого управления. Плавность изменения усилия при повороте рулевого колеса',
+    v3: '',
+    v4: '32.',
+    v5: 'Соответствие содержания загрязняющих веществ в отработавших газах транспортных средств установленным требованиям',
+    v6: '',
+    v7: '55.',
+    v8: 'Наличие знака аварийной остановки',
+    v9: ''
+  }, {
+    v1: '13.',
+    v2: 'Отсутствие самопроизвольного поворота рулевого колеса с усилителем рулевого управления от нейтрального положения при работающем двигателе',
+    v3: '',
+    v4: '33.',
+    v5: 'Отсутствие подтекания и каплепадения топлива в системе питания',
+    v6: '',
+    v7: '56.',
+    v8: 'Наличие не менее двух противооткатных упоров',
+    v9: ''
+  }, {
+    v1: '14.',
+    v2: 'Отсутствие  превышения предельных значений суммарного люфта в рулевом управлении',
+    v3: '',
+    v4: '34.',
+    v5: 'Работоспособность запорных устройств и устройств перекрытия топлива',
+    v6: '',
+    v7: '57.',
+    v8: 'Наличие огнетушителей, соответствующих установленным требованиям',
+    v9: ''
+  }, {
+    v1: '15.',
+    v2: 'Отсутствие повреждения и полная комплектность деталей крепления рулевой колонки и картера рулевого механизма',
+    v3: '',
+    v4: '35.',
+    v5: 'Герметичность системы питания транспортных средств, работающих на газе. Соответствие газовых баллонов установленным требованиям',
+    v6: '',
+    v7: '58.',
+    v8: 'Надежное крепление поручней в автобусах, запасного колеса, аккумуляторной батареи, сидений, огнетушителей и медицинской аптечки',
+    v9: ''
+  }, {
+    v1: '16.',
+    v2: 'Отсутствие следов остаточной деформации,  трещин и других дефектов в рулевом механизме и рулевом приводе',
+    v3: '',
+    v4: '36.',
+    v5: 'Соответствие нормам уровня шума выпускной системы',
+    v6: '',
+    v7: '59.',
+    v8: 'Работоспособность механизмов регулировки сидений',
+    v9: ''
+  }, {
+    v1: '17.',
+    v2: 'Отсутствие устройств, ограничивающих поворот рулевого колеса, не предусмотренных конструкцией',
+    v3: '',
+    v4: '',
+    v5: 'VII. Прочие элементы конструкции',
+    v6: '',
+    v7: '60.',
+    v8: 'Наличие надколесных грязезащитных устройств, отвечающих установленным требованиям',
+    v9: ''
+  }, {
+    v1: '',
+    v2: 'III. Внешние световые приборы',
+    v3: '',
+    v4: '37.',
+    v5: 'Наличие зеркал заднего вида в соответствии с требованиями',
+    v6: '',
+    v7: '61.',
+    v8: 'Соответствие вертикальной статической нагрузки на тяговое устройство автомобиля от сцепной петли одноосного прицепа (прицепа-роспуска) нормам',
+    v9: ''
+  }, {
+    v1: '18.',
+    v2: 'Соответствие устройств освещения и световой сигнализации  установленным требованиям',
+    v3: '',
+    v4: '38.',
+    v5: 'Отсутствие дополнительных предметов или покрытий, ограничивающих обзорность с места водителя. Соответствие полосы пленки в  верхней  части ветрового  стекла  установленным требованиям',
+    v6: '',
+    v7: '62.',
+    v8: 'Работоспособность держателя запасного колеса, лебедки и механизма подъема-опускания запасного колеса',
+    v9: ''
+  }, {
+    v1: '19.',
+    v2: 'Отсутствие разрушений  рассеивателей световых приборов',
+    v3: '',
+    v4: '39.',
+    v5: 'Соответствие норме светопропускания ветрового стекла, передних боковых стекол и стекол передних дверей',
+    v6: '',
+    v7: '63.',
+    v8: 'Работоспособность механизмов подъема и опускания опор и фиксаторов транспортного положения опор',
+    v9: ''
+  }, {
+    v1: '20.',
+    v2: 'Работоспособность и режим работы сигналов торможения',
+    v3: '',
+    v4: '40.',
+    v5: 'Отсутствие трещин на ветровом стекле в зоне очистки водительского стеклоочистителя',
+    v6: '',
+    v7: '64.',
+    v8: 'Соответствие каплепадения масел и рабочих жидкостей нормам',
+    v9: ''
+  }, {
+    v1: '21.',
+    v2: 'Соответствие углов регулировки и силы света фар установленным требованиям',
+    v3: '',
+    v4: '41.',
+    v5: 'Работоспособность замков дверей кузова,  кабины, механизмов регулировки и фиксирующих устройств сидений, устройства обогрева и обдува ветрового стекла, противоугонного устройства',
+    v6: '',
+    v7: '65.',
+    v8: 'Установка государственных регистрационных знаков в соответствии с требованиями',
+    v9: ''
+  }];
+  var myStyle = wb.Style();
+  myStyle.Font.Size(10);
+  myStyle.Font.Family('Times New Roman');
+  myStyle.Font.Alignment.Vertical('center');
+  myStyle.Font.Alignment.Horizontal('center');
+  myStyle.Font.WrapText();
+  var myStyle2 = wb.Style();
+  myStyle2.Fill.Color('C5F8FF');
+  myStyle2.Fill.Pattern('solid');
+  myStyle2.Font.Family('Times New Roman');
+  myStyle2.Font.Alignment.Vertical('center');
+  myStyle2.Font.Alignment.Horizontal('center');
+  myStyle2.Font.WrapText();
+  myStyle2.Border({
+    left: {
+      style: 'thin',
+      color: 'D0D0D0'
+    },
+    right: {
+      style: 'thin',
+      color: 'D0D0D0'
+    },
+    top: {
+      style: 'thin',
+      color: 'D0D0D0'
+    },
+    bottom: {
+      style: 'thin',
+      color: 'D0D0D0'
+    }
+  });
+  var leftBorder = wb.Style();
+  leftBorder.Border({
+    left: {
+      style: 'thick',
+      color: '0000FF'
+    }
+  });
+  var bottomBorder = wb.Style();
+  bottomBorder.Border({
+    bottom: {
+      style: 'thick',
+      color: '0000FF'
+    }
+  });
+
+  ws2.Column(1).Width(4);
+  ws2.Column(2).Width(10);
+  ws2.Column(3).Width(0);
+  ws2.Column(4).Width(10);
+  ws2.Column(5).Width(10);
+  ws2.Column(6).Width(3);
+  ws2.Column(7).Width(4);
+  ws2.Column(8).Width(15);
+  ws2.Column(9).Width(12);
+  ws2.Column(10).Width(0);
+  ws2.Column(11).Width(3);
+  ws2.Column(12).Width(4);
+  ws2.Column(13).Width(15);
+  ws2.Column(14).Width(15);
+  ws2.Column(15).Width(3);
+
+  //объединение ячеек
+  ws2.Cell(1, 1, 1, 15, true).Format.Font.Alignment.Horizontal('center').String('Диагностическая карта  Certificate of periodic technical inspection');
+  ws2.Cell(2, 1, 2, 4, true).Format.Font.Alignment.Horizontal('left').String('Регистрационный номер');
+  ws2.Cell(2, 5, 2, 7, true);
+  ws2.Cell(2, 12, 2, 13, true).Format.Font.Alignment.Horizontal('left').Format.Font.Bold().String('Срок действия до:');
+  ws2.Cell(2, 14, 2, 15, true);
+  ws2.Cell(3, 1, 3, 5, true).String('Оператор технического осмотра:');
+  ws2.Cell(3, 6, 3, 15, true);
+  ws2.Cell(4, 1, 4, 5, true).String('Пункт технического осмотра:');
+  ws2.Cell(4, 6, 4, 15, true);
+
+  for (var i = 5; i < 10; ++i) {
+    ws2.Cell(i, 1, i, 4, true).String(data[i].v1);
+    ws2.Cell(i, 5, i, 8, true).String(data[i].v2).Style(myStyle2);
+    ws2.Cell(i, 9, i, 12, true).String(data[i].v3);
+    ws2.Cell(i, 13, i, 15, true).String(data[i].v4).Style(myStyle2);
+  }
+
+  ws2.Cell(10, 1, 10, 6, true).String(data[10].v1).Style(myStyle);
+  ws2.Cell(10, 7, 10, 15, true).String(data[10].v2).Style(myStyle2);
+
+  //data for first column
+  ws2.Cell(13, 6).String(post._1).Style(myStyle2);
+  ws2.Cell(14, 6).String(post._2).Style(myStyle2);
+  ws2.Cell(15, 6).String(post._3).Style(myStyle2);
+  ws2.Cell(16, 6).String(post._4).Style(myStyle2);
+  ws2.Cell(17, 6).String(post._5).Style(myStyle2);
+  ws2.Cell(18, 6).String(post._6).Style(myStyle2);
+  ws2.Cell(19, 6).String(post._7).Style(myStyle2);
+  ws2.Cell(20, 6).String(post._8).Style(myStyle2);
+  ws2.Cell(21, 6).String(post._9).Style(myStyle2);
+  ws2.Cell(22, 6).String(post._10).Style(myStyle2);
+  ws2.Cell(23, 6).String(post._11).Style(myStyle2);
+  ws2.Cell(25, 6).String(post._12).Style(myStyle2);
+  ws2.Cell(26, 6).String(post._13).Style(myStyle2);
+  ws2.Cell(27, 6).String(post._14).Style(myStyle2);
+  ws2.Cell(28, 6).String(post._15).Style(myStyle2);
+  ws2.Cell(29, 6).String(post._16).Style(myStyle2);
+  ws2.Cell(30, 6).String(post._17).Style(myStyle2);
+  ws2.Cell(32, 6).String(post._18).Style(myStyle2);
+  ws2.Cell(33, 6).String(post._19).Style(myStyle2);
+  ws2.Cell(34, 6).String(post._20).Style(myStyle2);
+  ws2.Cell(35, 6).String(post._21).Style(myStyle2);
+  //data for second column
+  ws2.Cell(12, 11).String(post._22).Style(myStyle2);
+  ws2.Cell(14, 11).String(post._23).Style(myStyle2);
+  ws2.Cell(15, 11).String(post._24).Style(myStyle2);
+  ws2.Cell(16, 11).String(post._25).Style(myStyle2);
+  ws2.Cell(18, 11).String(post._26).Style(myStyle2);
+  ws2.Cell(19, 11).String(post._27).Style(myStyle2);
+  ws2.Cell(20, 11).String(post._28).Style(myStyle2);
+  ws2.Cell(21, 11).String(post._29).Style(myStyle2);
+  ws2.Cell(22, 11).String(post._30).Style(myStyle2);
+  ws2.Cell(23, 11).String(post._31).Style(myStyle2);
+  ws2.Cell(25, 11).String(post._32).Style(myStyle2);
+  ws2.Cell(26, 11).String(post._33).Style(myStyle2);
+  ws2.Cell(27, 11).String(post._34).Style(myStyle2);
+  ws2.Cell(28, 11).String(post._35).Style(myStyle2);
+  ws2.Cell(29, 11).String(post._36).Style(myStyle2);
+  ws2.Cell(31, 11).String(post._37).Style(myStyle2);
+  ws2.Cell(32, 11).String(post._38).Style(myStyle2);
+  ws2.Cell(33, 11).String(post._39).Style(myStyle2);
+  ws2.Cell(34, 11).String(post._40).Style(myStyle2);
+  ws2.Cell(35, 11).String(post._41).Style(myStyle2);
+  //data for third column
+  ws2.Cell(12, 15).String(post._42).Style(myStyle2);
+  ws2.Cell(13, 15).String(post._43).Style(myStyle2);
+  ws2.Cell(14, 15).String(post._44).Style(myStyle2);
+  ws2.Cell(15, 15).String(post._45).Style(myStyle2);
+  ws2.Cell(16, 15).String(post._46).Style(myStyle2);
+  ws2.Cell(17, 15).String(post._47).Style(myStyle2);
+  ws2.Cell(18, 15).String(post._48).Style(myStyle2);
+  ws2.Cell(19, 15).String(post._49).Style(myStyle2);
+  ws2.Cell(20, 15).String(post._50).Style(myStyle2);
+  ws2.Cell(21, 15).String(post._51).Style(myStyle2);
+  ws2.Cell(22, 15).String(post._52).Style(myStyle2);
+  ws2.Cell(23, 15).String(post._53).Style(myStyle2);
+  ws2.Cell(24, 15).String(post._54).Style(myStyle2);
+  ws2.Cell(25, 15).String(post._55).Style(myStyle2);
+  ws2.Cell(26, 15).String(post._56).Style(myStyle2);
+  ws2.Cell(27, 15).String(post._57).Style(myStyle2);
+  ws2.Cell(28, 15).String(post._58).Style(myStyle2);
+  ws2.Cell(29, 15).String(post._59).Style(myStyle2);
+  ws2.Cell(30, 15).String(post._60).Style(myStyle2);
+  ws2.Cell(31, 15).String(post._61).Style(myStyle2);
+  ws2.Cell(32, 15).String(post._62).Style(myStyle2);
+  ws2.Cell(33, 15).String(post._63).Style(myStyle2);
+  ws2.Cell(34, 15).String(post._64).Style(myStyle2);
+  ws2.Cell(35, 15).String(post._65).Style(myStyle2);
+
+  //opt
+  for (var i = 11; i < 36; i++) {
+    ws2.Row(i).Height(50);
+    ws2.Cell(i, 1).String(data[i].v1).Style(myStyle);
+    ws2.Cell(i, 2, i, 5, true).String(data[i].v2).Style(myStyle);
+    ws2.Cell(i, 7).String(data[i].v4).Style(myStyle);
+    ws2.Cell(i, 8, i, 9, true).String(data[i].v5).Style(myStyle);
+    ws2.Cell(i, 12).String(data[i].v7).Style(myStyle);
+    ws2.Cell(i, 13, i, 14, true).String(data[i].v8).Style(myStyle);
+  }
+  //Border
+  ws2.Cell(1, 16, 35, 16).Style(leftBorder);
+  ws2.Cell(35, 1, 35, 15).Style(bottomBorder);
+}
+
+
+function createThirdSheet(data1, post) {
+  ws3 = wb.WorkSheet('ДК лист 2', wsOpts);
+
+  ws3.Column(1).Width(10);
+  ws3.Column(2).Width(12);
+  ws3.Column(3).Width(10);
+  ws3.Column(4).Width(20);
+  ws3.Column(5).Width(15);
+  ws3.Column(6).Width(15);
+  ws3.Column(7).Width(17);
+
+  ws3.Row(48).Height(30);
+  //стили
+  var myStyle = wb.Style();
+  myStyle.Font.Size(12);
+  myStyle.Font.Family('Times New Roman');
+  myStyle.Font.Alignment.Vertical('center');
+  myStyle.Font.Alignment.Horizontal('center');
+  myStyle.Font.WrapText();
+
+  var myStyle2 = wb.Style();
+  myStyle2.Fill.Color('C5F8FF');
+  myStyle2.Fill.Pattern('solid');
+  myStyle2.Font.Size(12);
+  myStyle2.Font.Family('Times New Roman');
+  myStyle2.Font.Alignment.Vertical('center');
+  myStyle2.Font.Alignment.Horizontal('center');
+  myStyle2.Font.WrapText();
+  myStyle2.Border({
+    left: {
+      style: 'thin',
+      color: 'D0D0D0'
+    },
+    right: {
+      style: 'thin',
+      color: 'D0D0D0'
+    },
+    top: {
+      style: 'thin',
+      color: 'D0D0D0'
+    },
+    bottom: {
+      style: 'thin',
+      color: 'D0D0D0'
+    }
+  });
+  var myStyle3 = wb.Style();
+  myStyle3.Font.Size(12);
+  myStyle3.Font.Family('Times New Roman');
+  myStyle3.Font.Alignment.Vertical('center');
+  myStyle3.Font.Alignment.Horizontal('left');
+  myStyle3.Font.WrapText();
+
+  var myStyle4 = wb.Style();
+  myStyle4.Font.Size(11);
+  myStyle4.Font.Family('Times New Roman');
+  myStyle4.Font.WrapText();
+
+  var leftBorder = wb.Style();
+  leftBorder.Border({
+    left: {
+      style: 'thick',
+      color: '0000FF'
+    }
+  });
+  var bottomBorder = wb.Style();
+  bottomBorder.Border({
+    bottom: {
+      style: 'thick',
+      color: '0000FF'
+    }
+  });
+  //Журнал регистрации
+  ws0.Cell(2, 22).String(post.date);
+  ws0.Cell(2, 23).String(post.validity);
+  //Первый лист
+  if (post.checkType == '1')
+    ws.Cell(3, 3).String('X');
+  else if (post.checkType == '2')
+    ws.Cell(3, 6).String('X');
+  if (post.result == true)
+    ws.Cell(93, 8, 93, 9).Style(myStyle2);
+  else
+    ws.Cell(93, 10, 93, 11).Style(myStyle2);
+  ws.Cell(94, 4).String(post.date);
+  ws.Cell(94, 10).String(post.expert);
+  //Второй лист срок действия
+  ws2.Cell(2, 14).String(post.validity);
+  console.log('lol123');
+  console.log(post.checkType);
+  if (post.checkType == '1') {
+    console.log('CHeCK TRUE');
+    ws2.Cell(5, 5).String('X');
+  } else if (post.checkType == '2') {
+    console.log('CHECK FALSE');
+    ws2.Cell(5, 13).String('X');
+  }
+  ws2.Cell(2, 14).String(post.validity);
+  ws2.Cell(3, 6).String(post.expert);
+  //объединение ячеек
+  ws3.Cell(1, 1, 1, 7, true).String('Результаты диагностирования').Style(myStyle);
+  ws3.Cell(2, 1, 2, 6, true).String('Параметры, по которым установлено несоответствие').Style(myStyle);
+  ws3.Cell(2, 7, 3, 7, true).String('Пункт диагностической карты').Style(myStyle);
+  ws3.Cell(3, 1).String('Нижняя граница').Style(myStyle);
+  ws3.Cell(3, 2).String('Результат проверки').Style(myStyle);
+  ws3.Cell(3, 3).String('Верхняя граница').Style(myStyle);
+  ws3.Cell(3, 4, 3, 6, true).String('Наименование параметра').Style(myStyle);
+  ws3.Cell(3, 7).String('Пункт диагностической карты').Style(myStyle);
+  for (var i = 4; i < 14; ++i) {
+    ws3.Cell(i, 1).Style(myStyle);
+    ws3.Cell(i, 2).Style(myStyle);
+    ws3.Cell(i, 3).Style(myStyle);
+    ws3.Cell(i, 4, i, 6, true).Style(myStyle);
+    ws3.Cell(i, 7).Style(myStyle);
+  }
+  for (var i = 0; i < diagnosticIssues.length; ++i) {
+    ws3.Cell(i + 4, 1).String(diagnosticIssues[i].v1);
+    ws3.Cell(i + 4, 2).String(diagnosticIssues[i].v2);
+    ws3.Cell(i + 4, 3).String(diagnosticIssues[i].v3);
+    ws3.Cell(i + 4, 4).String(diagnosticIssues[i].v4);
+    ws3.Cell(i + 4, 7).String(diagnosticIssues[i].v5);
+  }
+  ws3.Cell(14, 1, 14, 7, true).String('Невыполненные требования').Style(myStyle);
+  ws3.Cell(15, 1, 15, 2, true).String('Предмет проверки (узел, деталь, агрегат)').Style(myStyle);
+  ws3.Cell(15, 3, 15, 6, true).String('Содержание невыполненного требования (с указанием нормативного источника)').Style(myStyle);
+  ws3.Cell(15, 7).String('Пункт диагностической карты').Style(myStyle);
+  for (var i = 16; i < 27; ++i) {
+    ws3.Cell(i, 1, i, 2, true).Style(myStyle);
+    ws3.Cell(i, 3, i, 6, true).Style(myStyle);
+    ws3.Cell(i, 7).Style(myStyle);
+  }
+  console.log('ArtStyle');
+  console.log(failedRequirements);
+  for (var i = 0; i < failedRequirements.length; ++i) {
+    ws3.Cell(i + 16, 1).String(failedRequirements[i].v1);
+    ws3.Cell(i + 16, 3).String(failedRequirements[i].v2);
+    ws3.Cell(i + 16, 7).String(failedRequirements[i].v3);
+  }
+  ws3.Cell(27, 1, 27, 7, true).Format.Font.Alignment.Horizontal('left').String('Примечания:');
+  ws3.Cell(28, 1, 32, 7, true).String(notes).Style(myStyle3);
+  ws3.Cell(33, 1, 33, 7, true).String('Данные транспортного средства').Style(myStyle);
+  ws3.Cell(34, 1, 34, 2, true).String(data1[7].v5).Style(myStyle3);
+  ws3.Cell(34, 3, 34, 4, true).String(data1[7].v6).Style(myStyle2);
+  ws3.Cell(34, 5, 35, 6, true).String(data1[6].v5).Style(myStyle3);
+  ws3.Cell(34, 7, 35, 7, true).String(data1[6].v6).Style(myStyle2);
+  ws3.Cell(35, 1, 35, 2, true).String(data1[4].v5).Style(myStyle3);
+  ws3.Cell(35, 3, 35, 4, true).String(data1[4].v6).Style(myStyle2);
+  ws3.Cell(36, 1, 36, 2, true).String(data1[5].v5).Style(myStyle3);
+  ws3.Cell(36, 3, 36, 4, true).String(data1[5].v6).Style(myStyle2);
+  ws3.Cell(36, 5, 37, 6, true).String(data1[3].v5).Style(myStyle3);
+  ws3.Cell(36, 7, 37, 7, true).String(data1[3].v6).Style(myStyle2);
+  ws3.Cell(37, 1, 37, 2, true).String(data1[7].v3).Style(myStyle3);
+  ws3.Cell(37, 3, 37, 4, true).String(data1[7].v4).Style(myStyle2);
+
+  ws3.Cell(38, 1, 38, 5, true).String('Заключение о возможности/невозможности эксплуатации транспортного средства').Style(myStyle4);
+  ws3.Cell(39, 1, 39, 5, true).String('Results of the roadworthiness inspection').Format.Font.Family('Times New Roman');
+  ws3.Cell(38, 6, 39, 6, true).String('Возможно   Passed').Style(myStyle);
+  ws3.Cell(38, 7, 39, 7, true).String('Невозможно    Failed').Style(myStyle);
+  if (post.result == true)
+    ws3.Cell(38, 6).Style(myStyle2);
+  else
+    ws3.Cell(38, 7).Style(myStyle2);
+  ws3.Cell(46, 3).String(post.date).Style(myStyle);
+  ws3.Cell(40, 1, 42, 5, true).String('Пункты диагностической карты, требующие повторной проверки:').Format.Font.Alignment.Vertical('top').Format.Font.Family('Times New Roman');
+  ws3.Cell(40, 6, 41, 7, true).String('Повторный технический контроль пройти до:').Style(myStyle);
+  ws3.Cell(42, 6, 42, 7, true).String(post.repeat).Style(myStyle);
+  ws3.Cell(44, 1, 45, 2, true).Format.Font.Alignment.Horizontal('center').String('Номер в ЕАИСТО');
+  ws3.Cell(44, 3, 45, 4, true).Style(myStyle2);
+  ws3.Cell(46, 1, 46, 2, true).Format.Font.Alignment.Horizontal('center').String('Дата проверки ТС:');
+  ws3.Cell(46, 3, 46, 4, true).String(post.date).Style(myStyle2);
+  ws3.Cell(46, 6).String('Печать         Stamp').Style(myStyle);
+  ws3.Cell(47, 1, 47, 3, true).String('Ф.И.О. технического эксперта');
+  ws3.Cell(47, 4).String(post.expert).Style(myStyle2);
+  ws3.Cell(48, 1, 48, 3, true).String('Подпись                                   Signature').Style(myStyle);
+  //Border
+  ws3.Cell(1, 8, 49, 8).Style(leftBorder);
+  ws3.Cell(49, 1, 49, 7).Style(bottomBorder);
+}
+
+function createFourthSheet(data1, post) {
+  ws4 = wb.WorkSheet('квитанция', wsOpts);
+  var myStyle = wb.Style();
+  myStyle.Font.Size(12);
+  myStyle.Font.Family('Times New Roman');
+  myStyle.Font.Alignment.Vertical('center');
+  myStyle.Font.Alignment.Horizontal('left');
+  myStyle.Font.WrapText();
+  var myStyle2 = wb.Style();
+  myStyle2.Font.Size(12);
+  myStyle2.Font.Family('Times New Roman');
+  myStyle2.Font.Alignment.Vertical('center');
+  myStyle2.Font.Alignment.Horizontal('center');
+  myStyle2.Font.WrapText();
+  var myBorder = wb.Style();
+  myBorder.Border({
+    top: {
+      style: 'thick',
+      color: '0000FF'
+    },
+    left: {
+      style: 'thick',
+      color: '0000FF'
+    },
+    right: {
+      style: 'thick',
+      color: '0000FF'
+    },
+    bottom: {
+      style: 'thick',
+      color: '0000FF'
+    }
+  });
+
+  ws4.Column(2).Width(22);
+  ws4.Column(7).Width(12);
+  ws4.Column(8).Width(10);
+  ws4.Column(9).Width(10);
+
+  ws4.Cell(1, 1, 1, 7, true).String('Получатель: Индивидуальный предприниматель Пополитов Руслан Александрович');
+  ws4.Cell(2, 1, 2, 7, true).String('Банк получателя: РОССИЙСКИЙ НАЦИОНАЛЬНЫЙ КОММЕРЧЕСКИЙ БАНК (ПАО)');
+  ws4.Cell(3, 1, 3, 7, true).String('р/с: 40802810741200000048');
+  ws4.Cell(4, 1, 4, 7, true).String('к/с: 30101810400000000607 в ОПЕРУ МГТУ Банка России');
+  ws4.Cell(5, 1, 5, 7, true).String('БИК: 044525607  ИНН: 920100006420');
+  ws4.Cell(6, 1, 6, 2, true).Format.Font.Bold().Format.Font.Alignment.Horizontal('center').String('Плательщик');
+  ws4.Cell(6, 3, 6, 7, true).Format.Font.Bold().Format.Font.Alignment.Horizontal('center').String(data1[9].v2);
+  ws4.Cell(7, 1, 7, 2, true).Format.Font.Alignment.Horizontal('center').String('моб. тел.');
+  ws4.Cell(7, 3, 7, 7, true).Format.Font.Alignment.Horizontal('center').String('+79788987206');
+  ws4.Cell(8, 1, 8, 2, true).Format.Font.Alignment.Horizontal('center').String('Вид платежа');
+  ws4.Cell(8, 3, 8, 7, true).Format.Font.Alignment.Horizontal('center').String('за услуги по проведению технического  контроля');
+  ws4.Cell(9, 1, 9, 2, true).Format.Font.Alignment.Horizontal('center').String('Cумма'); //wtf
+  ws4.Cell(10, 1, 10, 2, true).Format.Font.Alignment.Horizontal('center').String(''); //wtf
+  ws4.Cell(14, 1, 14, 9, true).String('Расписка в получении денежных средств').Style(myStyle2);
+  ws4.Row(17).Height(40);
+  ws4.Cell(16, 1, 17, 9, true).String('Я,  Соломатов Алексей Валерьевич, во исполнение поручения, совершенного в порядке предусмотренного главой 49 Гражданского кодекса РФ и установленном ст.16 закона Российской Федерации от 07.07.2011 г. №170-ФЗ  "О техническом контроле транспортных средств и о внесении изменений в отдельные законодательные акты РФ",')
+    .Style(myStyle);
+  ws4.Cell(18, 1).String('принял от').Style(myStyle);
+  ws4.Cell(18, 2, 18, 3, true).String(data1[9].v2).Style(myStyle2);
+  ws4.Cell(18, 4, 18, 5, true).String('денежные средства в размере').Style(myStyle); //wtf
+  ws4.Cell(18, 8, 18, 9, true).String('для оплаты услуг по').Style(myStyle);
+  ws4.Cell(19, 1, 19, 9, true).String(' техническому контролю. Обязуюсь внести их в полном объеме на расчетный счет ИП Пополитов Р.А. за проведение').Style(myStyle);
+  ws4.Cell(20, 1, 20, 2, true).String(' технического контроля автомобиля ').Style(myStyle);
+  ws4.Cell(20, 3, 20, 4, true).String(data1[4].v4).Style(myStyle2);
+  ws4.Cell(20, 5, 20, 6, true).String('гос. регистрационный знак').Style(myStyle);
+  ws4.Cell(20, 7).String(data1[4].v2).Style(myStyle2);
+  ws4.Cell(21, 1, 21, 9, true).String(' в течение 3-х дней. С условиями приема указанной в платежном документе суммы, в т.ч. с суммой взымаемой платы ').Style(myStyle);
+  ws4.Cell(22, 1, 22, 9, true).String('за услуги  банка, ознакомлен и согласен.').Style(myStyle);
+  ws4.Cell(25, 2).String(post.date).Style(myStyle2);
+  ws4.Cell(25, 6, 25, 9, true).String(' ________________ /А.В. Соломатов/').Style(myStyle);
+  ws4.Cell(28, 1, 28, 9, true).String('_________________________________________________________________________________________________________________________').Style(myStyle);
+  ws4.Cell(30, 1, 30, 9, true).String('Поручение на оплату услуг').Style(myStyle2);
+  ws4.Cell(32, 1).String('Я,  ').Style(myStyle).Format.Font.Alignment.Horizontal('right');
+  ws4.Cell(32, 2, 32, 3, true).String(data1[9].v2).Style(myStyle);
+  ws4.Cell(32, 4, 32, 9, true).String('руководствуясь ст.16 закона Российской Федерации от 07.07.2011 г. №170-ФЗ ').Style(myStyle);
+  ws4.Cell(33, 1, 33, 9, true).String('"О техническом осмотре транспортных средств и о внесении изменений в отдельные законодательные акты РФ",').Style(myStyle);
+  ws4.Cell(34, 1, 34, 3, true).String('представляя для технического контроля автомобиль ').Style(myStyle);
+  ws4.Cell(34, 4, 34, 5, true).String(data1[4].v4).Style(myStyle2);
+  ws4.Cell(34, 6, 34, 7, true).String('гос. регистрационный знак').Style(myStyle2);
+  ws4.Cell(34, 8, 34, 9, true).String(data1[4].v2).Style(myStyle);
+  ws4.Cell(35, 1, 35, 9, true).String('в порядке, предусмотренном главой 49 Гражданского кодекса РФ поручаю внести за меня плату за оказания услуг').Style(myStyle);
+  ws4.Cell(36, 1).String(' в размере').Style(myStyle); //wtf
+  ws4.Cell(37, 1, 37, 9, true).String('С условиями приема указанной в платежном документе суммы, в т.ч. с суммой взымаемой платы за услуги банка, ознакомлен и согласен.').Style(myStyle);
+  ws4.Cell(39, 2).String(post.date).Style(myStyle2);
+  ws4.Cell(39, 5, 39, 9, true).String('____________________/' + data1[9].v2).Style(myStyle);
+  //Border
+  ws4.Cell(1, 1, 40, 9).Style(myBorder);
+}
+
+function final(post) {
+  ws0.Cell(2, 27).String(post.reg);
+  ws2.Cell(2, 5).String(post.reg);
+  ws3.Cell(44, 3).String(post.reg);
+}
+
 var onRequest = function(req, res) {
   console.log("request received!");
   if (req.method == 'POST') {
     var body = '';
     req.on('data', function(data) {
       body += data;
-
       // Too much POST data, kill the connection!
       if (body.length > 1e6)
         req.connection.destroy();
@@ -1569,36 +1554,33 @@ var onRequest = function(req, res) {
     req.on('end', function() {
       var post = qs.parse(body);
       console.log(post);
-      console.log(post[0]);
-      console.log(post[0].msg);
-      for (pr in post[0])
-        console.log(pr);
       if (post.path) {
         if (post.mypath) {
           path = post.mypath;
+          fs.writeFile('path.txt', path, function(err) {
+            if (err) throw err;
+          });
         }
         res.end(path);
         return;
       }
-      if (post[0].msg == 'step 1') {
+      if (post.msg == 'step 1') {
+        wb = wsOpts = ws0 = ws = ws2 = ws3 = ws4 = '';
         data1 = createWorkBook(post);
-        console.log(data1);
-        console.log('STEP 1');
-      } else if (post[post.length - 1].msg == 'step 2') {
+      } else if (post.msg == 'step 2') {
+        ws2 = '';
+        diagnosticIssues = JSON.parse(post.diagnosticIssues);
+        failedRequirements = JSON.parse(post.failedRequirements);
+        notes = post.notes;
         createSecondSheet(data1, post);
         console.log('STEP 2');
-        // wb.write(path + "/" + token + ".xlsx");
-      } else if (post[post.length - 1].msg == 'step 3') {
+      } else if (post.msg == 'step 3') {
+        ws3 = '';
         createThirdSheet(data1, post);
         createFourthSheet(data1, post);
         // Synchronously write file
-        var token = uid(16);
-        wb.write("./data/" + token + ".xlsx");
-        wb = ws0 = ws = ws2 = ws3 = ws4 = '';
-        console.log('STEP 3');
+        wb.write(path + "/" + data1[9].v2 + ".xlsx");
       } else {
-        console.log('final step');
-        console.log(post);
         final(post);
       }
       res.end();
