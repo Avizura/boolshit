@@ -25,18 +25,15 @@ function getPath() {
 getPath();
 
 function go() {
-  document.getElementById('go').innerHTML = 'OK!';
   chrome.tabs.query({
     active: true,
     currentWindow: true
   }, function(tabs) {
     chrome.tabs.sendMessage(tabs[0].id, {
       tab: tabs[0]
-    }, function(response) {
-      document.getElementById("mytext").innerHTML = "SUCCESS!";
-      alert("Success");
-    });
+    }, function(response) {});
   });
+  this.innerHTML = "OK!";
 }
 
 document.getElementById('go').addEventListener('click', go);

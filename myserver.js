@@ -212,7 +212,7 @@ function createWorkBook(post) {
   ws0.Cell(2, 21).String(post.regKOGDA).Style(myStyle5);
   ws0.Cell(2, 22).String('').Style(myStyle5);
   ws0.Cell(2, 23).String('').Style(myStyle5);
-  ws0.Cell(2, 24).String('Карых С. В.').Style(myStyle5);
+  ws0.Cell(2, 24).String('').Style(myStyle5);
   ws0.Cell(2, 25).String('').Style(myStyle5);
   ws0.Cell(2, 26).String('').Style(myStyle5);
   ws0.Cell(2, 27).String('').Style(myStyle5);
@@ -1343,14 +1343,15 @@ function createThirdSheet(data1, post) {
   //Журнал регистрации
   ws0.Cell(2, 22).String(post.date);
   ws0.Cell(2, 23).String(post.validity);
+  ws0.Cell(2, 24).String(post.expert);
   //Первый лист
   if (post.checkType == '1')
     ws.Cell(3, 3).String('X');
   else if (post.checkType == '2')
     ws.Cell(3, 6).String('X');
-  if (post.result == true)
+  if (post.result == '1')
     ws.Cell(93, 8, 93, 9).Style(myStyle2);
-  else
+  else if (post.result == '2')
     ws.Cell(93, 10, 93, 11).Style(myStyle2);
   ws.Cell(94, 4).String(post.date);
   ws.Cell(94, 10).String(post.expert);
@@ -1420,9 +1421,9 @@ function createThirdSheet(data1, post) {
   ws3.Cell(39, 1, 39, 5, true).String('Results of the roadworthiness inspection').Format.Font.Family('Times New Roman');
   ws3.Cell(38, 6, 39, 6, true).String('Возможно   Passed').Style(myStyle);
   ws3.Cell(38, 7, 39, 7, true).String('Невозможно    Failed').Style(myStyle);
-  if (post.result == true)
+  if (post.result == '1')
     ws3.Cell(38, 6).Style(myStyle2);
-  else
+  else if (post.result == '2')
     ws3.Cell(38, 7).Style(myStyle2);
   ws3.Cell(46, 3).String(post.date).Style(myStyle);
   ws3.Cell(40, 1, 42, 5, true).String('Пункты диагностической карты, требующие повторной проверки:').Format.Font.Alignment.Vertical('top').Format.Font.Family('Times New Roman');

@@ -40,8 +40,8 @@ function getRadioValue() {
 
 function getResult() {
   if (document.getElementsByClassName('zakluchenie_variant zakluchenie_da')[0].style.display == "")
-    return true;
-  return false;
+    return '1';
+  return '2';
 }
 
 function diagnisticResults() {
