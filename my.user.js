@@ -76,12 +76,8 @@ function failedRequirements() {
   return failedRequirements;
 }
 
-console.log("new");
-
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
   var validity = repeat = '';
-  console.log("EURIKA!!");
-  console.log(sender);
   try {
     var step = document.getElementsByClassName("sel")[1].getElementsByClassName('kvadr')[0].innerHTML;
   } catch (e) {
@@ -184,7 +180,6 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
         failedRequirements: JSON.stringify(failedRequirements()),
         notes: geName('RESULTAT_PRIMECHANIE')
       }
-      // data.push(diagnostic);
   } else if (step == '3') {
     if (getResult() == true)
       validity = ge('SROK_DEISTV');
@@ -206,13 +201,9 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
   }
   request.onreadystatechange = function() {
     if (request.readyState == 4 && request.status == 200) {
-      console.log(request.responseText);
-      console.log('response received');
       sendResponse();
     }
   }
-  console.log('go!');
-  console.log(data);
   request.open('POST', serverAddress + '/mytest', true);
   request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   request.send(toUrlEncoded(data));

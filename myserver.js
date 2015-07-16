@@ -1356,13 +1356,9 @@ function createThirdSheet(data1, post) {
   ws.Cell(94, 10).String(post.expert);
   //Второй лист срок действия
   ws2.Cell(2, 14).String(post.validity);
-  console.log('lol123');
-  console.log(post.checkType);
   if (post.checkType == '1') {
-    console.log('CHeCK TRUE');
     ws2.Cell(5, 5).String('X');
   } else if (post.checkType == '2') {
-    console.log('CHECK FALSE');
     ws2.Cell(5, 13).String('X');
   }
   ws2.Cell(2, 14).String(post.validity);
@@ -1399,8 +1395,6 @@ function createThirdSheet(data1, post) {
     ws3.Cell(i, 3, i, 6, true).Style(myStyle);
     ws3.Cell(i, 7).Style(myStyle);
   }
-  console.log('ArtStyle');
-  console.log(failedRequirements);
   for (var i = 0; i < failedRequirements.length; ++i) {
     ws3.Cell(i + 16, 1).String(failedRequirements[i].v1);
     ws3.Cell(i + 16, 3).String(failedRequirements[i].v2);
@@ -1567,6 +1561,7 @@ var onRequest = function(req, res) {
       if (post.msg == 'step 1') {
         wb = wsOpts = ws0 = ws = ws2 = ws3 = ws4 = '';
         data1 = createWorkBook(post);
+        console.log('STEP 1');
       } else if (post.msg == 'step 2') {
         ws2 = '';
         diagnosticIssues = JSON.parse(post.diagnosticIssues);
@@ -1578,10 +1573,12 @@ var onRequest = function(req, res) {
         ws3 = '';
         createThirdSheet(data1, post);
         createFourthSheet(data1, post);
+        console.log('STEP 3');
+      } else {
+        console.log('FINAL STEP');
+        final(post);
         // Synchronously write file
         wb.write(path + "/" + data1[9].v2 + ".xlsx");
-      } else {
-        final(post);
       }
       res.end();
     });

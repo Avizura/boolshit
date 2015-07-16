@@ -1,5 +1,6 @@
 var serverAddress = 'http://127.0.0.1:5000';
 var request = new XMLHttpRequest();
+
 function toUrlEncoded(obj) {
   var urlEncoded = "";
   for (var key in obj) {
@@ -7,6 +8,7 @@ function toUrlEncoded(obj) {
   }
   return urlEncoded;
 }
+
 function getPath() {
   request.onreadystatechange = function() {
     if (request.readyState == 4 && request.status == 200) {
@@ -15,11 +17,15 @@ function getPath() {
   }
   request.open('POST', serverAddress + '/mytest', true);
   request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  request.send(toUrlEncoded({path: true, mypath: document.getElementById('path').value}));
+  request.send(toUrlEncoded({
+    path: true,
+    mypath: document.getElementById('path').value
+  }));
 }
 getPath();
 
 function go() {
+  document.getElementById('go').innerHTML = 'OK!';
   chrome.tabs.query({
     active: true,
     currentWindow: true
