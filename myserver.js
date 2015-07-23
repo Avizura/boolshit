@@ -140,85 +140,7 @@ function createWorkBook(post) {
       color: 'D0D0D0'
     }
   });
-  var blackStyle = wb.Style();
-  blackStyle.Font.Size(12);
-  blackStyle.Font.Family('Times New Roman');
-  blackStyle.Font.Alignment.Vertical('center');
-  blackStyle.Font.Alignment.Horizontal('center');
-  blackStyle.Font.Color('FFFFFF');
-  blackStyle.Font.WrapText();
-  blackStyle.Fill.Color('000000');
-  blackStyle.Fill.Pattern('solid');
-  /*
-    Code to generate page Журнал регистрации ТС
-  */
-  ws0.Column(1).Width(25);
-  ws0.Column(3).Width(20);
-  ws0.Column(4).Width(20);
-  ws0.Column(6).Width(20);
-  ws0.Column(20).Width(30);
 
-  ws0.Cell(1, 1).String('РЕГИСТРАЦИОННЫЙ НОМЕР').Style(blackStyle);
-  ws0.Cell(1, 2).String('Владелец ТС ').Style(blackStyle);
-  ws0.Cell(1, 3).String('Регестрационный знак ТС').Style(blackStyle);
-  ws0.Cell(1, 4).String('VIN').Style(blackStyle);
-  ws0.Cell(1, 5).String('№ шасси, рамы').Style(blackStyle);
-  ws0.Cell(1, 6).String('№ кузова').Style(blackStyle);
-  ws0.Cell(1, 7).String('Марка ТС').Style(blackStyle);
-  ws0.Cell(1, 8).String('Модель ТС').Style(blackStyle);
-  ws0.Cell(1, 9).String('Колич. авто').Style(blackStyle);
-  ws0.Cell(1, 10).String('Категория ТС').Style(blackStyle);
-  ws0.Cell(1, 11).String('Год выпуска ТС').Style(blackStyle);
-  ws0.Cell(1, 12).String('Марка шин').Style(blackStyle);
-  ws0.Cell(1, 13).String('Пробег ТС').Style(blackStyle);
-  ws0.Cell(1, 14).String('Тип топлива').Style(blackStyle);
-  ws0.Cell(1, 15).String('Тип тормозной системы').Style(blackStyle);
-  ws0.Cell(1, 16).String('Разрешенная мах  масса').Style(blackStyle);
-  ws0.Cell(1, 17).String('Масса без нагрузки').Style(blackStyle);
-  ws0.Cell(1, 18).String('СРТС или ПТС серия').Style(blackStyle);
-  ws0.Cell(1, 19).String('СРТС или ПТС  номер').Style(blackStyle);
-  ws0.Cell(1, 20).String('СРТС или ПТС кем выдан кем').Style(blackStyle);
-  ws0.Cell(1, 21).String('СРТС или ПТС  когда выдан').Style(blackStyle);
-  ws0.Cell(1, 22).String('Дата ТК').Style(blackStyle);
-  ws0.Cell(1, 23).String('Срок действия до: ').Style(blackStyle);
-  ws0.Cell(1, 24).String('Ф.И.О. технического эксперта ').Style(blackStyle);
-  ws0.Cell(1, 25).String('Цена').Style(blackStyle);
-  ws0.Cell(1, 26).String('Письменно').Style(blackStyle);
-  ws0.Cell(1, 27).String('ЕАИСТО').Style(blackStyle);
-  ws0.Cell(1, 28).String('Договор').Style(blackStyle);
-  ws0.Cell(1, 29).String('ТЕЛ').Style(blackStyle);
-  ws0.Cell(1, 30).String('№ Счета').Style(blackStyle);
-
-  // ws0.Cell(2, 1).String(post[]); //wtf
-  ws0.Cell(2, 2).String(post.secondName + " " + post.firstName + " " + post.lastName).Style(myStyle5);
-  ws0.Cell(2, 3).String(post.regPlate).Style(myStyle5);
-  ws0.Cell(2, 4).String(post.vin).Style(myStyle5);
-  ws0.Cell(2, 5).String(post.chassis).Style(myStyle5);
-  ws0.Cell(2, 6).String(post.body).Style(myStyle5);
-  ws0.Cell(2, 7).String(post.mark).Style(myStyle5);
-  ws0.Cell(2, 8).String(post.model).Style(myStyle5);
-  ws0.Cell(2, 9).String('1').Style(myStyle5); //wtf
-  ws0.Cell(2, 10).String(post.vehicleCategory).Style(myStyle5);
-  ws0.Cell(2, 11).String(post.year).Style(myStyle5);
-  ws0.Cell(2, 12).String(post.tire).Style(myStyle5);
-  ws0.Cell(2, 13).String(post.mileage).Style(myStyle5);
-  ws0.Cell(2, 14).String(post.fuel).Style(myStyle5);
-  ws0.Cell(2, 15).String(post.brakeSystem).Style(myStyle5);
-  ws0.Cell(2, 16).String(post.maxWeight).Style(myStyle5);
-  ws0.Cell(2, 17).String(post.weight).Style(myStyle5);
-  ws0.Cell(2, 18).String(post.regSERIA).Style(myStyle5);
-  ws0.Cell(2, 19).String(post.regNOMER).Style(myStyle5);
-  ws0.Cell(2, 20).String(post.regKEM).Style(myStyle5);
-  ws0.Cell(2, 21).String(post.regKOGDA).Style(myStyle5);
-  ws0.Cell(2, 22).String('').Style(myStyle5);
-  ws0.Cell(2, 23).String('').Style(myStyle5);
-  ws0.Cell(2, 24).String('').Style(myStyle5);
-  ws0.Cell(2, 25).String('').Style(myStyle5);
-  ws0.Cell(2, 26).String('').Style(myStyle5);
-  ws0.Cell(2, 27).String('').Style(myStyle5);
-  ws0.Cell(2, 28).String('').Style(myStyle5);
-  ws0.Cell(2, 29).String('').Style(myStyle5);
-  ws0.Cell(2, 30).String('').Style(myStyle5);
   /*
     Code to generate page Первичный
   */
@@ -809,6 +731,111 @@ function createWorkBook(post) {
   ws.Cell(95, 1, 95, 12).Style(bottomBorder);
 
   return data;
+}
+
+function createFirstSheet() {
+  var XLSX = require('xlsx');
+  var workbook = XLSX.readFile('journal.xlsx');
+  var firstSheetName = workbook.SheetNames[0];
+  var worksheet = workbook.Sheets[firstSheetName];
+  var array = XLSX.utils.sheet_to_json(worksheet);
+  var myStyle = wb.Style();
+  myStyle.Font.Alignment.Vertical('center');
+  myStyle.Font.Alignment.Horizontal('center');
+  myStyle.Font.Family('Times New Roman');
+  myStyle.Font.Size(10);
+  myStyle.Font.WrapText();
+  var blackStyle = wb.Style();
+  blackStyle.Font.Size(12);
+  blackStyle.Font.Family('Times New Roman');
+  blackStyle.Font.Alignment.Vertical('center');
+  blackStyle.Font.Alignment.Horizontal('center');
+  blackStyle.Font.Color('FFFFFF');
+  blackStyle.Font.WrapText();
+  blackStyle.Fill.Color('000000');
+  blackStyle.Fill.Pattern('solid');
+  /*
+    Code to generate page Журнал регистрации ТС
+  */
+  ws0.Column(1).Width(25);
+  ws0.Column(3).Width(20);
+  ws0.Column(4).Width(20);
+  ws0.Column(6).Width(20);
+  ws0.Column(20).Width(30);
+
+  ws0.Cell(1, 1).String('РЕГИСТРАЦИОННЫЙ НОМЕР').Style(blackStyle);
+  ws0.Cell(1, 2).String('Владелец ТС ').Style(blackStyle);
+  ws0.Cell(1, 3).String('Регестрационный знак ТС').Style(blackStyle);
+  ws0.Cell(1, 4).String('VIN').Style(blackStyle);
+  ws0.Cell(1, 5).String('№ шасси, рамы').Style(blackStyle);
+  ws0.Cell(1, 6).String('№ кузова').Style(blackStyle);
+  ws0.Cell(1, 7).String('Марка ТС').Style(blackStyle);
+  ws0.Cell(1, 8).String('Модель ТС').Style(blackStyle);
+  ws0.Cell(1, 9).String('Колич. авто').Style(blackStyle);
+  ws0.Cell(1, 10).String('Категория ТС').Style(blackStyle);
+  ws0.Cell(1, 11).String('Год выпуска ТС').Style(blackStyle);
+  ws0.Cell(1, 12).String('Марка шин').Style(blackStyle);
+  ws0.Cell(1, 13).String('Пробег ТС').Style(blackStyle);
+  ws0.Cell(1, 14).String('Тип топлива').Style(blackStyle);
+  ws0.Cell(1, 15).String('Тип тормозной системы').Style(blackStyle);
+  ws0.Cell(1, 16).String('Разрешенная мах  масса').Style(blackStyle);
+  ws0.Cell(1, 17).String('Масса без нагрузки').Style(blackStyle);
+  ws0.Cell(1, 18).String('СРТС или ПТС серия').Style(blackStyle);
+  ws0.Cell(1, 19).String('СРТС или ПТС  номер').Style(blackStyle);
+  ws0.Cell(1, 20).String('СРТС или ПТС кем выдан кем').Style(blackStyle);
+  ws0.Cell(1, 21).String('СРТС или ПТС  когда выдан').Style(blackStyle);
+  ws0.Cell(1, 22).String('Дата ТК').Style(blackStyle);
+  ws0.Cell(1, 23).String('Срок действия до: ').Style(blackStyle);
+  ws0.Cell(1, 24).String('Ф.И.О. технического эксперта ').Style(blackStyle);
+  ws0.Cell(1, 25).String('Цена').Style(blackStyle);
+  ws0.Cell(1, 26).String('Письменно').Style(blackStyle);
+  ws0.Cell(1, 27).String('ЕАИСТО').Style(blackStyle);
+  ws0.Cell(1, 28).String('Договор').Style(blackStyle);
+  ws0.Cell(1, 29).String('ТЕЛ').Style(blackStyle);
+  ws0.Cell(1, 30).String('№ Счета').Style(blackStyle);
+
+  console.log('Reading File...');
+  for (var i = 0; i < array.length; i++) {
+    var j = 1;
+    for (key in array[i]) {
+      ws0.Cell(i + 2, j).String(array[i][key]).Style(myStyle);
+      j++;
+    }
+  }
+  console.log('Reading file has been completed!');
+  var regNumber = (parseInt(array[array.length - 1]['РЕГИСТРАЦИОННЫЙ НОМЕР']) + 1).toString();
+  if(regNumber.length < 15)
+    regNumber = '0' + regNumber;
+  ws0.Cell(array.length + 2, 1).String(regNumber).Style(myStyle);
+  ws0.Cell(2, 2).String(post.secondName + " " + post.firstName + " " + post.lastName).Style(myStyle);
+  ws0.Cell(2, 3).String(post.regPlate).Style(myStyle);
+  ws0.Cell(2, 4).String(post.vin).Style(myStyle);
+  ws0.Cell(2, 5).String(post.chassis).Style(myStyle);
+  ws0.Cell(2, 6).String(post.body).Style(myStyle);
+  ws0.Cell(2, 7).String(post.mark).Style(myStyle);
+  ws0.Cell(2, 8).String(post.model).Style(myStyle);
+  ws0.Cell(2, 9).String('1').Style(myStyle);
+  ws0.Cell(2, 10).String(post.vehicleCategory).Style(myStyle);
+  ws0.Cell(2, 11).String(post.year).Style(myStyle);
+  ws0.Cell(2, 12).String(post.tire).Style(myStyle);
+  ws0.Cell(2, 13).String(post.mileage).Style(myStyle);
+  ws0.Cell(2, 14).String(post.fuel).Style(myStyle);
+  ws0.Cell(2, 15).String(post.brakeSystem).Style(myStyle);
+  ws0.Cell(2, 16).String(post.maxWeight).Style(myStyle);
+  ws0.Cell(2, 17).String(post.weight).Style(myStyle);
+  ws0.Cell(2, 18).String(post.regSERIA).Style(myStyle);
+  ws0.Cell(2, 19).String(post.regNOMER).Style(myStyle);
+  ws0.Cell(2, 20).String(post.regKEM).Style(myStyle);
+  ws0.Cell(2, 21).String(post.regKOGDA).Style(myStyle);
+  ws0.Cell(2, 22).String('').Style(myStyle);
+  ws0.Cell(2, 23).String('').Style(myStyle);
+  ws0.Cell(2, 24).String('').Style(myStyle);
+  ws0.Cell(2, 25).String('').Style(myStyle);
+  ws0.Cell(2, 26).String('').Style(myStyle);
+  ws0.Cell(2, 27).String('').Style(myStyle);
+  ws0.Cell(2, 28).String('').Style(myStyle);
+  ws0.Cell(2, 29).String('').Style(myStyle);
+  ws0.Cell(2, 30).String('').Style(myStyle);
 }
 
 function createSecondSheet(data1, post) {
@@ -1562,6 +1589,7 @@ var onRequest = function(req, res) {
       if (post.msg == 'step 1') {
         wb = wsOpts = ws0 = ws = ws2 = ws3 = ws4 = '';
         data1 = createWorkBook(post);
+        createFirstSheet(post);
         console.log('STEP 1');
       } else if (post.msg == 'step 2') {
         ws2 = '';

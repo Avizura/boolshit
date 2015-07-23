@@ -4,7 +4,8 @@
   "description": "Transform to xls.",
   "main": "my.user.js",
   "dependencies": {
-    "excel4node": "^0.2.17"
+    "excel4node": "^0.2.17",
+    "xlsx": "^0.8.0"
   },
   "devDependencies": {},
   "scripts": {
