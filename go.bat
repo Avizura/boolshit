@@ -1,1 +1,1 @@
-START /MIN CMD.EXE /C run.bat
+node myserver.js & pause
