@@ -1,19 +1,18 @@
 var http = require('http');
-var url = require("url");
+var url = require('url');
 var qs = require('querystring');
 var fs = require('fs');
+var path = require('path');
 var serverPort = '5000';
 var serverAddress = '127.0.0.1';
-var wb, wsOpts, ws0, ws, ws2, ws3, ws4, ws5, data1, diagnosticIssues, failedRequirements, notes;
+var journal, wb, wsOpts, ws0, ws, ws2, ws3, ws4, data1, diagnosticIssues, failedRequirements, notes, regNumber;
 try {
   var xl = require('excel4node');
 } catch (e) {
   var xl = require('./node_modules/excel4node/lib/index.js');
 }
-var path;
-fs.readFile('path.txt', function(err, data) {
-  path = '' + data;
-});
+var wbPath = '' + fs.readFileSync('path.txt');
+var journalPath = '' + fs.readFileSync('journalPath.txt');
 
 function createWorkBook(post) {
   var options = {
@@ -22,6 +21,7 @@ function createWorkBook(post) {
     }
   }
   wb = new xl.WorkBook(options);
+  journal = new xl.WorkBook(options);
 
   wsOpts = {
     margins: {
@@ -41,7 +41,7 @@ function createWorkBook(post) {
     }
   }
 
-  ws0 = wb.WorkSheet('Журнал регистрации ТС', wsOpts);
+  ws0 = journal.WorkSheet('Журнал регистрации ТС', wsOpts);
   ws = wb.WorkSheet('Первичный', wsOpts);
   /*
     Styles
@@ -735,17 +735,17 @@ function createWorkBook(post) {
 
 function createFirstSheet() {
   var XLSX = require('xlsx');
-  var workbook = XLSX.readFile('journal.xlsx');
+  var workbook = XLSX.readFile(path.normalize(journalPath));
   var firstSheetName = workbook.SheetNames[0];
   var worksheet = workbook.Sheets[firstSheetName];
   var array = XLSX.utils.sheet_to_json(worksheet);
-  var myStyle = wb.Style();
+  var myStyle = journal.Style();
   myStyle.Font.Alignment.Vertical('center');
   myStyle.Font.Alignment.Horizontal('center');
   myStyle.Font.Family('Times New Roman');
   myStyle.Font.Size(10);
   myStyle.Font.WrapText();
-  var blackStyle = wb.Style();
+  var blackStyle = journal.Style();
   blackStyle.Font.Size(12);
   blackStyle.Font.Family('Times New Roman');
   blackStyle.Font.Alignment.Vertical('center');
@@ -803,8 +803,8 @@ function createFirstSheet() {
     }
   }
   console.log('Reading file has been completed!');
-  var regNumber = (parseInt(array[array.length - 1]['РЕГИСТРАЦИОННЫЙ НОМЕР']) + 1).toString();
-  if(regNumber.length < 15)
+  regNumber = (parseInt(array[array.length - 1]['РЕГИСТРАЦИОННЫЙ НОМЕР']) + 1).toString();
+  if (regNumber.length < 15)
     regNumber = '0' + regNumber;
   ws0.Cell(array.length + 2, 1).String(regNumber).Style(myStyle);
   ws0.Cell(2, 2).String(post.secondName + " " + post.firstName + " " + post.lastName).Style(myStyle);
@@ -1565,6 +1565,37 @@ function final(post) {
 
 var onRequest = function(req, res) {
   console.log("request received!");
+  if (req.method == 'GET') {
+    console.log('GET!!!!!');
+    var url_parts = url.parse(req.url, true);
+    var query = url_parts.query;
+    console.log(query);
+    if (query.path) {
+      if (query.mypath) {
+        path = query.mypath;
+        fs.writeFile('path.txt', path, function(err) {
+          if (err) {
+            console.log('Ошибка! Закройте файл path.txt!');
+            throw err;
+          }
+        });
+      }
+      res.end(path);
+      return;
+    } else if (query.journalPath) {
+      if (query.journalPathNew) {
+        journalPath = query.journalPathNew;
+        fs.writeFile('journalPath.txt', journalPath, function(err) {
+          if (err) {
+            console.log('Ошибка! Закройте файл journalPath.txt!');
+            throw err;
+          }
+        });
+      }
+      res.end(journalPath);
+      return;
+    }
+  }
   if (req.method == 'POST') {
     var body = '';
     req.on('data', function(data) {
@@ -1576,20 +1607,10 @@ var onRequest = function(req, res) {
     req.on('end', function() {
       var post = qs.parse(body);
       console.log(post);
-      if (post.path) {
-        if (post.mypath) {
-          path = post.mypath;
-          fs.writeFile('path.txt', path, function(err) {
-            if (err) throw err;
-          });
-        }
-        res.end(path);
-        return;
-      }
       if (post.msg == 'step 1') {
-        wb = wsOpts = ws0 = ws = ws2 = ws3 = ws4 = '';
+        journal = wb = wsOpts = ws0 = ws = ws2 = ws3 = ws4 = '';
         data1 = createWorkBook(post);
-        createFirstSheet(post);
+        createFirstSheet();
         console.log('STEP 1');
       } else if (post.msg == 'step 2') {
         ws2 = '';
@@ -1607,7 +1628,8 @@ var onRequest = function(req, res) {
         console.log('FINAL STEP');
         final(post);
         // Synchronously write file
-        wb.write(path + "/" + data1[9].v2 + ".xlsx");
+        journal.write(path.normalize(journalPath));
+        wb.write(path.normalize(wbPath + "/" + regNumber + ".xlsx"));
       }
       res.end();
     });

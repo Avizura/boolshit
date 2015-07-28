@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Transform to xls</title>
+  <title>Transform to xlsx</title>
   <link href="style.css" rel="stylesheet">
 </head>
 
@@ -10,10 +10,20 @@
   <div id="mytext">Click on the button!</div>
   <hr>
   <div id="block">
-    <span>Save To:</span>
-    <input id="path" type="text" value=''>
+    <ul>
+      <li>
+        <span>Journal File:</span>
+        <input id="journalPath" type="text" value=''>
+      </li>
+      <li>
+        <span>Save To:</span>
+        <input id="path" type="text" value=''>
+      </li>
+      <li>
+        <button id="go">GO!</button>
+      </li>
+    </ul>
   </div>
-  <button id="go">GO!</button>
   <script src="popup.js"></script>
 </body>
 
