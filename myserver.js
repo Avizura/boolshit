@@ -1566,21 +1566,20 @@ function final(post) {
 var onRequest = function(req, res) {
   console.log("request received!");
   if (req.method == 'GET') {
-    console.log('GET!!!!!');
     var url_parts = url.parse(req.url, true);
     var query = url_parts.query;
     console.log(query);
     if (query.path) {
       if (query.mypath) {
-        path = query.mypath;
-        fs.writeFile('path.txt', path, function(err) {
+        wbPath = query.mypath;
+        fs.writeFile('path.txt', wbPath, function(err) {
           if (err) {
             console.log('Ошибка! Закройте файл path.txt!');
             throw err;
           }
         });
       }
-      res.end(path);
+      res.end(wbPath);
       return;
     } else if (query.journalPath) {
       if (query.journalPathNew) {
@@ -1630,6 +1629,7 @@ var onRequest = function(req, res) {
         // Synchronously write file
         journal.write(path.normalize(journalPath));
         wb.write(path.normalize(wbPath + "/" + regNumber + ".xlsx"));
+        console.log('Done! Files have been written!');
       }
       res.end();
     });
